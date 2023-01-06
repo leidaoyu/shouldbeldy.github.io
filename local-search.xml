@@ -4,19 +4,21 @@
   
   
   <entry>
-    <title>hello first blog</title>
-    <link href="/2022/12/29/hello-first-blog/"/>
-    <url>/2022/12/29/hello-first-blog/</url>
+    <title>Gitlab 合作开发流程（新人向）</title>
+    <link href="/2023/01/06/Gitlab-%E5%90%88%E4%BD%9C%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B%EF%BC%88%E6%96%B0%E4%BA%BA%E5%90%91%EF%BC%89/"/>
+    <url>/2023/01/06/Gitlab-%E5%90%88%E4%BD%9C%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B%EF%BC%88%E6%96%B0%E4%BA%BA%E5%90%91%EF%BC%89/</url>
     
-    <content type="html"><![CDATA[<h1 id="第一章"><a href="#第一章" class="headerlink" title="第一章"></a>第一章</h1><p>test第一章</p><h1 id="第二张"><a href="#第二张" class="headerlink" title="第二张"></a>第二张</h1><p>test第二章</p><h2 id="第2-2"><a href="#第2-2" class="headerlink" title="第2.2"></a>第2.2</h2><p>test</p><h1 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h1><p><a href="http://www.www.www/">www.www.www</a>.</p>]]></content>
+    <content type="html"><![CDATA[<h1 id="后端接口开发流程和规范"><a href="#后端接口开发流程和规范" class="headerlink" title="后端接口开发流程和规范"></a>后端接口开发流程和规范</h1><p>总的来说就是先把项目code clone到本地，然后修改部分配置文件后本地run起来，然后创建新的分支，在新分支上进行功能接口的开发，本地用postman进行测试，测试通过后commit，并把分支merge到主分支，push后发起merge request，给mentor(reviewer) review代码，通过后完成项目。如果是接口修改，还需要在接口文档中@相关的前段人员等。  </p><h2 id="1-代码clone"><a href="#1-代码clone" class="headerlink" title="1.代码clone"></a>1.代码clone</h2><p>首先在gitlab找到代码库，切换develop分支后clone到本地  </p><blockquote><p>git clone xxxx</p></blockquote><h2 id="2-yml文件配置修改"><a href="#2-yml文件配置修改" class="headerlink" title="2.yml文件配置修改"></a>2.yml文件配置修改</h2><p>修改yml文件配置，如spring.profiles.active和bootstrap切换配置文件名，spring.cloud.nacos.discovery.enabled和spring.cloud.nacos.config.enabled设置为false(常见)  </p><h2 id="3-项目启动"><a href="#3-项目启动" class="headerlink" title="3.项目启动"></a>3.项目启动</h2><p>把项目在本地跑起来  </p><h2 id="4-项目开发"><a href="#4-项目开发" class="headerlink" title="4.项目开发"></a>4.项目开发</h2><h3 id="4-1-新建新的分支"><a href="#4-1-新建新的分支" class="headerlink" title="4.1.新建新的分支"></a>4.1.新建新的分支</h3><p>不允许在develop分支上直接开发，需要新建一个分支，分支命名通常为dev_f_xxxx(xxxx是项目编号)<br><strong>ps:项目编号一般可以在飞书等平台上找到</strong></p><h3 id="4-2-切换到新的分支进行开发"><a href="#4-2-切换到新的分支进行开发" class="headerlink" title="4.2.切换到新的分支进行开发"></a>4.2.切换到新的分支进行开发</h3><p>在新的分支上开发  </p><div align=center><img src="https://s3.bmp.ovh/imgs/2023/01/06/bfde56aea5ddbf4d.jpg" style="zoom:100%"></div>  <h3 id="4-3-接口测试"><a href="#4-3-接口测试" class="headerlink" title="4.3.接口测试"></a>4.3.接口测试</h3><p>用postman对开发完毕的接口进行功能测试  </p><h3 id="4-4-代码commit"><a href="#4-4-代码commit" class="headerlink" title="4.4.代码commit"></a>4.4.代码commit</h3><p>将修改后的代码commit，commit内容模板通常为:  </p><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs TEXT">项目名称-项目编号-2001 mod/add/del/ref  <br>**(空一行)**  <br>内容，通常是描述做的操作<br></code></pre></td></tr></table></figure><p><strong>ps:yml配置文件通常不允许commit</strong><br><strong>不要在一次commit里提交大量的变更，做到少量多次</strong></p><h3 id="4-5-更新develop"><a href="#4-5-更新develop" class="headerlink" title="4.5.更新develop"></a>4.5.更新develop</h3><p>切换到develop分支，执行git pull操作，将远端最新的代码拉到本地  </p><h3 id="4-6-merge分支"><a href="#4-6-merge分支" class="headerlink" title="4.6.merge分支"></a>4.6.merge分支</h3><p>再切换到dev_f_xxxx分支，将develop分支merge到本分支，有冲突本地解决</p><h3 id="4-7-发起merge-request"><a href="#4-7-发起merge-request" class="headerlink" title="4.7.发起merge request"></a>4.7.发起merge request</h3><p>把自己的分支dev_f_xxx push到远端后，在gitLab上提交merge request把dev_f_xxx合并到develop分支，assign给reviewer  </p><div align=center><img src="https://s3.bmp.ovh/imgs/2023/01/06/54b5b0985021c116.jpg" style="zoom:50%"></div><h2 id="5-流程结束"><a href="#5-流程结束" class="headerlink" title="5.流程结束"></a>5.流程结束</h2>]]></content>
     
     
     
     <tags>
       
-      <tag>Hexo</tag>
+      <tag>Java开发</tag>
       
-      <tag>Fluid</tag>
+      <tag>Ailab</tag>
+      
+      <tag>流程规范</tag>
       
     </tags>
     

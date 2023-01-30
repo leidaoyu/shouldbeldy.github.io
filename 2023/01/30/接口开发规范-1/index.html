@@ -16,26 +16,26 @@
   <meta name="author" content="Daoyu Lei">
   <meta name="keywords" content="">
   
-    <meta name="description" content="后端接口开发流程和规范总的来说就是先把项目code clone到本地，然后修改部分配置文件后本地run起来；接着创建新的分支，在新分支上进行功能接口的开发，开发完成后本地用postman进行测试，测试通过后commit，并把进行分支merge，push后发起merge request，给mentor(reviewer) review代码，通过后完成项目开发。如果是接口修改，还需要在接口文档中@相关">
+    <meta name="description" content="文档书写开发应该先编写详细接口文档，确定输入输出的命名，类型后再进行开发，避免后续需要修改，同时也可以让需要用到该接口的前端尽早开始开发流程。文档示例如下：  接口名称：XXX调用关系：XXX前端-&gt;XXX后端  123456789101112131415161718192021222324252627282930Schema: HTTPPath: &#x2F;api&#x2F;v1&#x2F;job&#x2F;getXXXHea">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Gitlab 合作开发流程（新人向）">
-<meta property="og:url" content="https://shouldbeldy.github.io/2023/01/06/Gitlab-%E5%90%88%E4%BD%9C%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B%EF%BC%88%E6%96%B0%E4%BA%BA%E5%90%91%EF%BC%89/index.html">
+<meta property="og:title" content="接口开发规范(1)">
+<meta property="og:url" content="https://shouldbeldy.github.io/2023/01/30/%E6%8E%A5%E5%8F%A3%E5%BC%80%E5%8F%91%E8%A7%84%E8%8C%83-1/index.html">
 <meta property="og:site_name" content="ShouldbeBlog">
-<meta property="og:description" content="后端接口开发流程和规范总的来说就是先把项目code clone到本地，然后修改部分配置文件后本地run起来；接着创建新的分支，在新分支上进行功能接口的开发，开发完成后本地用postman进行测试，测试通过后commit，并把进行分支merge，push后发起merge request，给mentor(reviewer) review代码，通过后完成项目开发。如果是接口修改，还需要在接口文档中@相关">
+<meta property="og:description" content="文档书写开发应该先编写详细接口文档，确定输入输出的命名，类型后再进行开发，避免后续需要修改，同时也可以让需要用到该接口的前端尽早开始开发流程。文档示例如下：  接口名称：XXX调用关系：XXX前端-&gt;XXX后端  123456789101112131415161718192021222324252627282930Schema: HTTPPath: &#x2F;api&#x2F;v1&#x2F;job&#x2F;getXXXHea">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://s3.bmp.ovh/imgs/2023/01/06/ca59fdcdab828d06.jpeg">
-<meta property="article:published_time" content="2023-01-06T02:52:01.000Z">
-<meta property="article:modified_time" content="2023-01-06T06:54:15.692Z">
+<meta property="og:image" content="https://s3.bmp.ovh/imgs/2023/01/30/693a757c0bb31eb5.png">
+<meta property="article:published_time" content="2023-01-30T01:49:34.000Z">
+<meta property="article:modified_time" content="2023-01-30T09:22:18.012Z">
 <meta property="article:author" content="Daoyu Lei">
 <meta property="article:tag" content="Java开发">
 <meta property="article:tag" content="Ailab">
 <meta property="article:tag" content="流程规范">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://s3.bmp.ovh/imgs/2023/01/06/ca59fdcdab828d06.jpeg">
+<meta name="twitter:image" content="https://s3.bmp.ovh/imgs/2023/01/30/693a757c0bb31eb5.png">
   
   
   
-  <title>Gitlab 合作开发流程（新人向） - ShouldbeBlog</title>
+  <title>接口开发规范(1) - ShouldbeBlog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -201,7 +201,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="Gitlab 合作开发流程（新人向）"></span>
+            <span id="subtitle" data-typed-text="接口开发规范(1)"></span>
           
         </div>
 
@@ -212,8 +212,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2023-01-06 10:52" pubdate>
-          2023年1月6日 上午
+        <time datetime="2023-01-30 09:49" pubdate>
+          2023年1月30日 上午
         </time>
       </span>
     
@@ -224,7 +224,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          921 字
+          3.4k 字
         
       </span>
     
@@ -235,7 +235,7 @@
         
         
         
-          8 分钟
+          28 分钟
         
       </span>
     
@@ -273,32 +273,48 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">Gitlab 合作开发流程（新人向）</h1>
+            <h1 style="display: none">接口开发规范(1)</h1>
             
             
               <div class="markdown-body">
                 
-                <h1 id="后端接口开发流程和规范"><a href="#后端接口开发流程和规范" class="headerlink" title="后端接口开发流程和规范"></a>后端接口开发流程和规范</h1><p>总的来说就是先把项目code clone到本地，然后修改部分配置文件后本地run起来；接着创建新的分支，在新分支上进行功能接口的开发，开发完成后本地用postman进行测试，测试通过后commit，并把进行分支merge，push后发起merge request，给mentor(reviewer) review代码，通过后完成项目开发。如果是接口修改，还需要在接口文档中@相关的前端人员等进行说明。  </p>
-<h2 id="1-代码clone"><a href="#1-代码clone" class="headerlink" title="1.代码clone"></a>1.代码clone</h2><p>首先在gitlab找到代码库，切换develop分支后clone到本地  </p>
+                <h2 id="文档书写"><a href="#文档书写" class="headerlink" title="文档书写"></a>文档书写</h2><p>开发应该先编写详细接口文档，确定输入输出的命名，类型后再进行开发，避免后续需要修改，同时也可以让需要用到该接口的前端尽早开始开发流程。文档示例如下：</p>
 <blockquote>
-<p>git clone xxxx</p>
+<p>接口名称：XXX<br>调用关系：XXX前端-&gt;XXX后端</p>
 </blockquote>
-<h2 id="2-yml文件配置修改"><a href="#2-yml文件配置修改" class="headerlink" title="2.yml文件配置修改"></a>2.yml文件配置修改</h2><p>修改yml文件配置，如spring.profiles.active和bootstrap切换配置文件名，spring.cloud.nacos.discovery.enabled和spring.cloud.nacos.config.enabled设置为false(常见)  </p>
-<h2 id="3-项目启动"><a href="#3-项目启动" class="headerlink" title="3.项目启动"></a>3.项目启动</h2><p>把项目在本地跑起来  </p>
-<h2 id="4-项目开发"><a href="#4-项目开发" class="headerlink" title="4.项目开发"></a>4.项目开发</h2><h3 id="4-1-新建新的分支"><a href="#4-1-新建新的分支" class="headerlink" title="4.1.新建新的分支"></a>4.1.新建新的分支</h3><p>不允许在develop分支上直接开发，需要新建一个分支，分支命名通常为dev_f_xxxx(xxxx是项目编号)<br><strong>ps:项目编号一般可以在飞书等平台上找到</strong></p>
-<h3 id="4-2-切换到新的分支进行开发"><a href="#4-2-切换到新的分支进行开发" class="headerlink" title="4.2.切换到新的分支进行开发"></a>4.2.切换到新的分支进行开发</h3><p>在新的分支上开发  </p>
-<div align=center><img src="https://s3.bmp.ovh/imgs/2023/01/06/bfde56aea5ddbf4d.jpg" srcset="/img/loading.gif" lazyload style="zoom:100%"></div>  
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><code class="hljs text">Schema: HTTP<br>Path: /api/v1/job/getXXX<br>Header:<br>    content-type: application/json;charset=UTF-8<br>Method: POST<br>body:<br>&#123;<br>    &quot;uid&quot;: &quot;STRING&quot;, // 用户id<br>    &quot;jobsNum&quot;: &quot;STRING&quot; // <br>&#125;<br><br>// Response<br>Status Code: 200<br>body:<br>&#123;<br>    &quot;traceId&quot;: &quot;STRING&quot;,<br>    &quot;msgCode&quot;: &quot;STRING&quot;,<br>    &quot;msg&quot;: &quot;STRING&quot;,<br>    &quot;data&quot;: [            <br>        &#123;<br>            &quot;jobId&quot;: &quot;String&quot;, // <br>            &quot;jobName&quot;: &quot;String&quot;, // <br>            &quot;createTime&quot;: &quot;String&quot;, //<br>            &quot;createUserId&quot;: &quot;String&quot;, // <br>            &quot;status&quot;: Integer, // <br>            &quot;clusterId&quot;: &quot;String&quot;, // <br>            &quot;runtime&quot;: &quot;String&quot; // <br>        &#125;<br>    ]<br>&#125;<br></code></pre></td></tr></table></figure>
 
-<h3 id="4-3-接口测试"><a href="#4-3-接口测试" class="headerlink" title="4.3.接口测试"></a>4.3.接口测试</h3><p>用postman对开发完毕的接口进行功能测试  </p>
-<h3 id="4-4-代码commit"><a href="#4-4-代码commit" class="headerlink" title="4.4.代码commit"></a>4.4.代码commit</h3><p>将修改后的代码commit，commit内容模板通常为:  </p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs TEXT">项目名称-项目编号-2001 mod/add/del/ref  <br>**(空一行)**  <br>内容，通常是描述做的操作<br></code></pre></td></tr></table></figure>
-<p><strong>ps:yml配置文件通常不允许commit</strong><br><strong>不要在一次commit里提交大量的变更，做到少量多次</strong></p>
-<h3 id="4-5-更新develop"><a href="#4-5-更新develop" class="headerlink" title="4.5.更新develop"></a>4.5.更新develop</h3><p>切换到develop分支，执行git pull操作，将远端最新的代码拉到本地  </p>
-<h3 id="4-6-merge分支"><a href="#4-6-merge分支" class="headerlink" title="4.6.merge分支"></a>4.6.merge分支</h3><p>再切换到dev_f_xxxx分支，将develop分支merge到本分支，有冲突本地解决</p>
-<h3 id="4-7-发起merge-request"><a href="#4-7-发起merge-request" class="headerlink" title="4.7.发起merge request"></a>4.7.发起merge request</h3><p>把自己的分支dev_f_xxx push到远端后，在gitLab上提交merge request把dev_f_xxx合并到develop分支，assign给reviewer  </p>
-<div align=center><img src="https://s3.bmp.ovh/imgs/2023/01/06/54b5b0985021c116.jpg" srcset="/img/loading.gif" lazyload style="zoom:50%"></div>
+<hr>
+<h2 id="接口输入输出"><a href="#接口输入输出" class="headerlink" title="接口输入输出"></a>接口输入输出</h2><h3 id="接口接受的Dto"><a href="#接口接受的Dto" class="headerlink" title="接口接受的Dto"></a>接口接受的Dto</h3><p>每个接口接受的RspDto需要额外编写，尽量不要复用他人的Dto类，因为如果他人的业务逻辑改了，比如改变一个属性的名称，会影响到自己的业务，所以需要尽可能解耦。</p>
+<h3 id="接口返回"><a href="#接口返回" class="headerlink" title="接口返回"></a>接口返回</h3><p>接口返回应该用ReturnBase封装起来，可以自动处理接口调用报错等信息</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@PostMapping(&quot;/getXXXX&quot;)</span><br><span class="hljs-meta">@ApiOperation(&quot;description&quot;)</span><br><span class="hljs-comment">// @OnlyIntranetAccess （内网调用）</span><br><span class="hljs-keyword">public</span> ResponseEntity&lt;ReturnBase&gt; <span class="hljs-title function_">getXXXX</span><span class="hljs-params">()</span>&#123;<br>        <span class="hljs-keyword">return</span> Optional.of(Service.getXXXX())<br>        .map(ret-&gt;<span class="hljs-keyword">new</span> <span class="hljs-title class_">ResponseEntity</span>&lt;&gt;(ret,HttpStatus.OK))<br>        .orElseThrow(()-&gt;<span class="hljs-keyword">new</span> <span class="hljs-title class_">MMException</span>(<span class="hljs-string">&quot;error.job.getXXXX&quot;</span>,ReturnEnum.C_GENERAL_BUSINESS_ERROR.getMsgCode()));<br>        &#125;<br></code></pre></td></tr></table></figure>
 
-<h2 id="5-流程结束"><a href="#5-流程结束" class="headerlink" title="5.流程结束"></a>5.流程结束</h2>
+<h3 id="接口返回处理"><a href="#接口返回处理" class="headerlink" title="接口返回处理"></a>接口返回处理</h3><ul>
+<li>处理用ReturnBase封装的接口返回信息时，需要序列化和反序列化，举例如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs java">String XXXXStr=JsonUtil.jsonObj2Str(XXXXReturn.getData());<br>        List&lt;XXXXRspDto&gt; XXXX=JsonUtil.jsonArrayStr2jsonArray(XXXXStr,XXXXRspDto.class);<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>enum枚举类在序列化和反序列化后需要在枚举类上添加@SerializedName注解，否则会变成0。value需要一一对应，如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@SerializedName(&quot;0&quot;)</span><br>DELETE(<span class="hljs-number">0</span>,<span class="hljs-string">&quot;删除&quot;</span>,<span class="hljs-string">&quot;Delete&quot;</span>),<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>对于返回的信息需要对各项空值进行判断，防止取数据的时候产生报错</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs java"><br><span class="hljs-keyword">if</span>(Objects.isNull(getXXXReturn)||<br>        Objects.isNull(getXXXReturn.getData())||<br>        !ReturnEnum.SUCCESS.getMsgCode().equals(getXXXReturn.getMsgCode()))&#123;<br>        log.error(<span class="hljs-string">&quot;get user info by username(&#123;&#125;) from aide-user failed, msg=&#123;&#125;&quot;</span><br>        ,XXX,<br>        Objects.isNull(getUidByNameReturn)?<span class="hljs-string">&quot;null&quot;</span>:getXXXReturn.getMsg());<br>        <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;<br>        &#125;<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="log等级设置"><a href="#log等级设置" class="headerlink" title="log等级设置"></a>log等级设置</h2><p>用log日志打印的时候，需要判断打印内容长度是否很多，如果内容很多需要使用<code>log.debug</code>而不是<code>log.info</code>。同时在log记录前需要对当前的log<br>level做一个判断，避免不必要的操作</p>
+<hr>
+<h2 id="尽可能规避硬编码"><a href="#尽可能规避硬编码" class="headerlink" title="尽可能规避硬编码"></a>尽可能规避硬编码</h2><p>文本部分尽量避免硬编码，可以采用yml文件配置custom的方式，例如在文本部分尽量避免硬编码，可以采用yml文件配置的方式，例如：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">custom:</span><br>  <span class="hljs-attr">bot:</span><br>    <span class="hljs-attr">feishu:</span><br>      <span class="hljs-attr">allSlurmJobOfUserPara:</span><br>        <span class="hljs-attr">defaultJobsNum:</span> <span class="hljs-string">&quot;15&quot;</span><br>        <span class="hljs-attr">nRow:</span> <span class="hljs-string">&quot;-n&quot;</span><br>        <span class="hljs-attr">noJobsReturn:</span> <span class="hljs-string">&quot;没有查询到任务&quot;</span><br>        <span class="hljs-attr">jobsReturn:</span> <span class="hljs-string">&quot;查询到&#123;jobsNum&#125;条任务记录:\n&quot;</span><br></code></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">package</span> org.openmmlab.platform.aidebot.property;<br><br><span class="hljs-keyword">import</span> cn.hutool.log.LogFactory;<br><span class="hljs-keyword">import</span> lombok.Data;<br><span class="hljs-keyword">import</span> org.springframework.boot.context.properties.ConfigurationProperties;<br><span class="hljs-keyword">import</span> org.springframework.cloud.context.config.annotation.RefreshScope;<br><span class="hljs-keyword">import</span> org.springframework.context.annotation.Configuration;<br><br><span class="hljs-keyword">import</span> java.util.List;<br><br><span class="hljs-meta">@Configuration</span><br><span class="hljs-meta">@ConfigurationProperties(prefix = &quot;custom&quot;)</span><br><span class="hljs-meta">@Data</span><br><span class="hljs-meta">@RefreshScope</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">CustomProperty</span> &#123;<br>    <span class="hljs-keyword">private</span> Bot bot;<br><br>    <span class="hljs-meta">@Data</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Bot</span> &#123;<br>        <span class="hljs-keyword">private</span> Feishu feishu;<br><br>        <span class="hljs-meta">@Data</span><br>        <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Feishu</span> &#123;<br>            <span class="hljs-keyword">private</span> AllSlurmJobOfUserPara allSlurmJobOfUserPara;<br><br>            <span class="hljs-meta">@Data</span><br>            <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">AllSlurmJobOfUserPara</span> &#123;<br>                <span class="hljs-keyword">private</span> String defaultJobsNum;<br>                <span class="hljs-keyword">private</span> String nRow;<br>                <span class="hljs-keyword">private</span> String noJobsReturn;<br>                <span class="hljs-keyword">private</span> String jobsReturn;<br>            &#125;<br>        &#125;<br>    &#125;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="kafka"><a href="#kafka" class="headerlink" title="kafka"></a>kafka</h2><p>本地运行项目不需要kafka，在项目路径中找到kafka目录，将里面的配置注释掉，否则会报如下错误</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">WARN [AdminClient clientId=adminclient-1] Connection to node -1 (localhost/127.0.0.1:9092) could not<br></code></pre></td></tr></table></figure>
                 
               </div>
             
@@ -326,8 +342,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>Gitlab 合作开发流程（新人向）</div>
-      <div>https://shouldbeldy.github.io/2023/01/06/Gitlab-合作开发流程（新人向）/</div>
+      <div>接口开发规范(1)</div>
+      <div>https://shouldbeldy.github.io/2023/01/30/接口开发规范-1/</div>
     </div>
     <div class="license-meta">
       
@@ -339,7 +355,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2023年1月6日</div>
+          <div>2023年1月30日</div>
         </div>
       
       
@@ -371,15 +387,15 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/01/30/%E6%8E%A5%E5%8F%A3%E5%BC%80%E5%8F%91%E8%A7%84%E8%8C%83-1/" title="接口开发规范(1)">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">接口开发规范(1)</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
+                    
+                      <a href="/2023/01/06/Gitlab-%E5%90%88%E4%BD%9C%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B%EF%BC%88%E6%96%B0%E4%BA%BA%E5%90%91%EF%BC%89/" title="Gitlab 合作开发流程（新人向）">
+                        <span class="hidden-mobile">Gitlab 合作开发流程（新人向）</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
                     
                   </article>
                 </div>

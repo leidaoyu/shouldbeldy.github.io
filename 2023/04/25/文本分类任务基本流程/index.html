@@ -1,0 +1,724 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/cat.png">
+  <link rel="icon" href="/img/cat.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#222135">
+  <meta name="author" content="Daoyu Lei">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="文本分类任务基本流程前言文本来源于笔者在openmmlab工程团队的知识分享。 文本分类是自然语言处理领域的一项基本任务，它涉及将给定文本分配到一个或多个预定义的类别，根据输出的不同分为单标签多分类(一个句子对应一个标签，如某一个新闻文本属于经济新闻或娱乐新闻等)和多标签分类(一个句子对应多个标签，比如一个新闻文本既属于经济新闻又属于娱乐新闻)。本文将以单标签多分类任务为例，简单介绍一下用pyto">
+<meta property="og:type" content="article">
+<meta property="og:title" content="文本分类任务基本流程">
+<meta property="og:url" content="https://shouldbeldy.github.io/2023/04/25/%E6%96%87%E6%9C%AC%E5%88%86%E7%B1%BB%E4%BB%BB%E5%8A%A1%E5%9F%BA%E6%9C%AC%E6%B5%81%E7%A8%8B/index.html">
+<meta property="og:site_name" content="ShouldbeBlog">
+<meta property="og:description" content="文本分类任务基本流程前言文本来源于笔者在openmmlab工程团队的知识分享。 文本分类是自然语言处理领域的一项基本任务，它涉及将给定文本分配到一个或多个预定义的类别，根据输出的不同分为单标签多分类(一个句子对应一个标签，如某一个新闻文本属于经济新闻或娱乐新闻等)和多标签分类(一个句子对应多个标签，比如一个新闻文本既属于经济新闻又属于娱乐新闻)。本文将以单标签多分类任务为例，简单介绍一下用pyto">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s3.bmp.ovh/imgs/2023/04/25/ad39d83cf9e4f0ad.webp">
+<meta property="article:published_time" content="2023-04-25T03:45:39.000Z">
+<meta property="article:modified_time" content="2023-04-25T05:49:40.548Z">
+<meta property="article:author" content="Daoyu Lei">
+<meta property="article:tag" content="深度学习">
+<meta property="article:tag" content="文本分类">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://s3.bmp.ovh/imgs/2023/04/25/ad39d83cf9e4f0ad.webp">
+  
+  
+  
+  <title>文本分类任务基本流程 - ShouldbeBlog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"shouldbeldy.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Shouldbe</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/background.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="文本分类任务基本流程"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-04-25 11:45" pubdate>
+          2023年4月25日 中午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          18k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          148 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">文本分类任务基本流程</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="文本分类任务基本流程"><a href="#文本分类任务基本流程" class="headerlink" title="文本分类任务基本流程"></a>文本分类任务基本流程</h1><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p><strong>文本来源于笔者在openmmlab工程团队的知识分享。</strong></p>
+<p>文本分类是自然语言处理领域的一项基本任务，它涉及将给定文本分配到一个或多个预定义的类别，根据输出的不同分为单标签多分类(一个句子对应一个标签，如某一个新闻文本属于经济新闻或娱乐新闻等)和多标签分类(一个句子对应多个标签，比如一个新闻文本既属于经济新闻又属于娱乐新闻)。本文将以单标签多分类任务为例，简单介绍一下用pytorch实现BERT中文文本分类的基本流程。</p>
+<h1 id="任务流程"><a href="#任务流程" class="headerlink" title="任务流程"></a>任务流程</h1><p><img src="https://s3.bmp.ovh/imgs/2023/04/25/91b39c1f2e9c00c0.png" srcset="/img/loading.gif" lazyload alt="文本分类流程"></p>
+<p>文本分类的基本流程一般是<code>文本-&gt;文本预处理-&gt;特征抽取-&gt;分类器训练-&gt;分类器评估-&gt;预测</code>。首先需要将文本进行清洗处理成结构化的数据，比如每一条文本处理成<code>sentence+&#39;\t&#39;+label</code>的形式，然后采用不同的word embedding方法将文本转换成向量，然后构建分类模型，将文本向量输入模型进行训练，每一个epoch后进行evaluation验证，最后进行预测。</p>
+<h1 id="流程相关概念介绍"><a href="#流程相关概念介绍" class="headerlink" title="流程相关概念介绍"></a>流程相关概念介绍</h1><h2 id="词嵌入"><a href="#词嵌入" class="headerlink" title="词嵌入"></a>词嵌入</h2><p>在CV任务中，输入往往是图像，对于一个图像而言，图像本身就是由像素点矩阵构成的，RGB通道的图像更是三维的矩阵，本身就含有大量的特征信息，而且能被计算机直接理解。而NLP任务的输入是句子，计算机无法直接理解句子，所以所有nlp任务的第一步也是相当重要的一步就是将单词或者句子转化成向量，这个过程称为<code>词嵌入(word embedding)</code>。</p>
+<p>简单来说每一个nlp模型都需要一个词表，通过词表先将一句话转化成一个编号向量，对于中文nlp任务还涉及到一个粒度的问题，有的模型是词粒度(每一个词转化成一个编号)，有的模型是字粒度(每一个字作为一个编号)，词表的每一个元素称为一个token。</p>
+<p><img src="https://s3.bmp.ovh/imgs/2023/04/25/2e7c9e453c21e6a8.png" srcset="/img/loading.gif" lazyload alt="str2index"></p>
+<p>如图，根据不同的处理规则和词表，可以将句子转化成词表对应的下标向量(如果出现不存在的token一般会用一个<code>UKN(unknown)</code>token来表示)，将句子转化成下标向量后，下一步是采用不同的特征提取方式将每一个token转化成一个向量，这样就可以达到将计算机无法理解的句子转化成计算机可以理解的向量的效果。根据词嵌入的原理大致可以细分成以下几种方法，具体方法原理可以查看对应的链接。</p>
+<iframe src="https://leidaoyu.github.io/webpage/markmap.html" width="100%" height="500" frameborder="0" allowfullscreen></iframe>
+
+
+<p>静态词嵌入是指，每一个token对应的向量是固定的，静态词向量的维度一般设置在300，即每一个token会被转变成一个300维的固定的词向量；动态词嵌入会根据词语所在的句子，通过BERT等预训练模型动态的生成词向量，比如“苹果公司推出了新产品”和“我今天吃了一个苹果”两个句子中的“苹果”通过动态词嵌入生成的向量是不一样的。动态词向量更能够学习到文本的上下文语义，极大的提升了nlp任务的效果。</p>
+<h2 id="预训练模型"><a href="#预训练模型" class="headerlink" title="预训练模型"></a>预训练模型</h2><p>预训练模型是一种深度学习模型，这种模型首先在大规模数据集上进行了预先训练，以学习文本或图像通用的特征或表示，然后在各种下游任务中进行微调，以适应特定的任务需求，从而极大地减少了训练时间和所需的数据量。</p>
+<h2 id="评价指标"><a href="#评价指标" class="headerlink" title="评价指标"></a>评价指标</h2><h3 id="混淆矩阵"><a href="#混淆矩阵" class="headerlink" title="混淆矩阵"></a>混淆矩阵</h3><p><img src="https://s3.bmp.ovh/imgs/2023/04/25/b2805dbce9847463.png" srcset="/img/loading.gif" lazyload alt="confusion matrix"></p>
+<p>混淆矩阵也称误差矩阵，是表示精度评价的一种标准格式，用n行n列的矩阵形式来表示。混淆矩阵（confusion matrix）是可视化工具，混淆矩阵的每一列代表了预测类别，每一列的总数表示预测为该类别的数据的数目；每一行代表了数据的真实归属类别，每一行的数据总数表示该类别的数据实例的数目。</p>
+<h3 id="准确率Acc"><a href="#准确率Acc" class="headerlink" title="准确率Acc"></a>准确率Acc</h3><p>准确率Accuracy就是所有预测正确的所有样本除以总样本，通常来说越接近1越好。准确率的使用有一定的局限性。比如当样本不平衡时，假设有99个负例，一个正例。如果模型将这些样本全部预测成了负例，准确率为99%，这显然是不合理的，此时准确率就失去了衡量模型性能的作用。在这种情况下，可以使用查准率和查全率，这两个指标对长尾数据集的模型评价更有说服力。</p>
+<p>在上图总共100个样本，我们一共预测对了15 + 15 + 45&#x3D;75个样本，所以准确率&#x3D;75&#x2F;100 &#x3D; 75%。</p>
+<h3 id="查准率Precision"><a href="#查准率Precision" class="headerlink" title="查准率Precision"></a>查准率Precision</h3><p>精确率是正确分类为正类的样本数占所有被预测为正类的样本数的比例，精确率关注的是模型预测类别的准确性。</p>
+<p>上图中对于A来说，共有24个样本被预测成A，但是其中只有15个样本真实是A，所以A的查准率&#x3D;15&#x2F;24&#x3D;62.5%</p>
+<h3 id="查全率Recall"><a href="#查全率Recall" class="headerlink" title="查全率Recall"></a>查全率Recall</h3><p>查全率是正确分类为正类的样本数占所有实际为正类的样本数的比例，查全率关注的是模型识别类别的能力。</p>
+<p>上图中对于A来说，共有20个样本A，但是其中只有15个样本被模型识别成了A，所以A的查全率&#x3D;15&#x2F;20&#x3D;62.5%</p>
+<h3 id="F1分数F1-score"><a href="#F1分数F1-score" class="headerlink" title="F1分数F1-score"></a>F1分数F1-score</h3><p>F1分数是精确率和召回率的调和平均值，用于综合考虑精确率和召回率。当我们想要在精确率和召回率之间取得平衡时，F1分数是一个很好的指标。F1的计算公式为</p>
+<p><img src="https://s3.bmp.ovh/imgs/2023/04/25/2695a805b2d402a2.png" srcset="/img/loading.gif" lazyload alt="F1"></p>
+<h2 id="常见超参数及模型相关概念"><a href="#常见超参数及模型相关概念" class="headerlink" title="常见超参数及模型相关概念"></a>常见超参数及模型相关概念</h2><ul>
+<li>device：在模型训练中，输入数据和模型放置的设备(cpu&#x2F;gpu)</li>
+<li>batch_size：在模型训练中，由于显存限制的原因，往往不能把全量的数据输入模型进行训练，所以需要把数据切分成更小的bacth，以batch为单位输入模型进行训练，batch_size指每一个batch包含多少条数据</li>
+<li>pad_size：在NLP任务中，我们通常需要处理的是不同长度的文本数据，为了使输入数据能够在神经网络中进行并行计算，我们需要将所有序列统一成相同的长度。pad_size就是设定一个固定的长度，对于长度较小的文本后面添加特殊token（通常是<code>[PAD]</code>），对于长度较大的文本直接截断，从而实现长度的统一。</li>
+<li>epoch：轮次，每次把所有batch都输入到模型训练一次即为一次epoch。</li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_38346042/article/details/128481422">weight_decay</a>：权重衰减，通过在Loss函数后加一个正则化项，通过使权重减小的方式，一定减少模型过拟合的问题。</li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/56029557">learning_rate</a>：学习率，控制我们要多大程度调整网络的权重，以符合梯度损失，值越低沿着梯度下降越慢，越高下降越快。</li>
+<li>bert_lr_ratio：由于bert等预训练模型的拟合能力过强，所以一般而言非bert层的学习率需要是bert层的5-10倍，bert_lr_ratio用来控制bert层学习率的百分比，一般设置为0.2。</li>
+<li>patience：为了防止模型过拟合和资源浪费，如果模型训练过程中，持续patience个epoch，模型的效果还没有提升，我们就认为此时模型已经拟合，就会提前停止。</li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/38200980">dropout</a>：dropout是指在神经网络的训练过程中随机地将某些神经元的输出设置为0。这样做的目的是为了防止过拟合，即模型过于依赖训练数据，无法泛化到新的数据上。通过随机地丢弃一部分神经元，dropout可以减少神经网络中神经元之间的复杂关系，从而提高模型的鲁棒性和泛化能力。在测试时，不再对神经元进行随机丢弃，而是将所有神经元都保留下来。</li>
+<li>mask：因为我们会对文本做PAD处理，对于模型而言<code>[PAD]</code>是没有意义的，所以需要知道encode后的token哪些是真实文本，哪些是<code>[PAD]</code>，我们会用一组0&#x2F;1向量来标识非<code>[PAD]</code>token，这个向量称为mask向量</li>
+<li>Special mark:在预训练模型中，有一些特殊的token用来表示特殊的意思，常见的包括：<ul>
+<li><code>[PAD]</code>:表示填充的token。</li>
+<li><code>[CLS]</code>:放在每一个句子的首位，表示句子级别的特征。</li>
+<li><code>[SEP]</code>:放在句子的尾位，表示一个句子结束。在句子对任务学习中用来区分不同的句子。</li>
+<li><code>[UNK]</code>:表示词表里没有的token。</li>
+</ul>
+</li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/261695487">optimizer</a>：优化器就是在深度学习反向传播过程中，指引损失函数（目标函数）的各个参数往正确的方向更新合适的大小，使得更新后的各个参数让损失函数（目标函数）值不断逼近全局最小。简单来说就是让loss变成最小的算法。</li>
+</ul>
+<h1 id="模型训练"><a href="#模型训练" class="headerlink" title="模型训练"></a>模型训练</h1><h2 id="超参数的设置"><a href="#超参数的设置" class="headerlink" title="超参数的设置"></a>超参数的设置</h2><p>首先需要设置模型训练<a target="_blank" rel="noopener" href="https://www.notion.so/a4a02d8de29d469ca74ea3af34deece0">相关的超参数</a></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># 各项参数设置</span><br>dataset = <span class="hljs-string">&#x27;data/THUCnews&#x27;</span><br>labels_name = [w.strip() <span class="hljs-keyword">for</span> w <span class="hljs-keyword">in</span> <span class="hljs-built_in">open</span>(os.path.join(dataset, <span class="hljs-string">&#x27;class.txt&#x27;</span>), <span class="hljs-string">&#x27;r&#x27;</span>, encoding=<span class="hljs-string">&#x27;utf8&#x27;</span>).readlines()]<br>pad_size = <span class="hljs-number">32</span><br>device = torch.device(<span class="hljs-string">&#x27;cpu&#x27;</span>)  <span class="hljs-comment"># cpu</span><br><span class="hljs-comment"># device = torch.device(&#x27;cuda&#x27;)  # 设备gpu</span><br>batch_size = <span class="hljs-number">4</span><br>bert_path = <span class="hljs-string">&#x27;bert-base-chinese&#x27;</span><br>num_classes = <span class="hljs-built_in">len</span>(labels_name)<br>weight_decay = <span class="hljs-number">0.02</span><br>num_epochs = <span class="hljs-number">30</span><br>learning_rate = <span class="hljs-number">5e-5</span><br>bert_lr_ratio = <span class="hljs-number">0.2</span><br>dropout = <span class="hljs-number">0.1</span><br>patience = <span class="hljs-number">6</span><br>save_path = <span class="hljs-string">&#x27;saved_dict/bert.ckpt&#x27;</span> <span class="hljs-comment"># 模型保存地址</span><br><br></code></pre></td></tr></table></figure>
+
+<h2 id="数据预处理"><a href="#数据预处理" class="headerlink" title="数据预处理"></a>数据预处理</h2><p>根据原始数据集采用适当的办法将数据集处理成文本和标签一一对应的格式，便于后续的数据读取。只要处理成一一对应的形式即可，比如将每一条文本和标签用<code>\t</code>拼接，后续可以很方便的处理。</p>
+<p><img src="https://s3.bmp.ovh/imgs/2023/04/25/7bf285f4e60415da.png" srcset="/img/loading.gif" lazyload alt="data process"></p>
+<h2 id="数据读取"><a href="#数据读取" class="headerlink" title="数据读取"></a>数据读取</h2><p>首先读取数据，将文本和对应的label对应起来。本文是用一个用一个二维的tuple保存单条数据，然后存到list中。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> tqdm <span class="hljs-keyword">import</span> tqdm<br><span class="hljs-keyword">import</span> os<br><br><span class="hljs-comment"># 读取数据集</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">data_loader</span>(<span class="hljs-params">file_path</span>):<br>    contents = []<br>    <span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(file_path, <span class="hljs-string">&#x27;r&#x27;</span>, encoding=<span class="hljs-string">&#x27;UTF-8&#x27;</span>) <span class="hljs-keyword">as</span> f:<br>        <span class="hljs-keyword">for</span> line <span class="hljs-keyword">in</span> tqdm(f):<br>            lin = line.strip()<br>            <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> lin:<br>                <span class="hljs-keyword">continue</span><br>            content, label = lin.split(<span class="hljs-string">&#x27;\t&#x27;</span>)<br>            contents.append((content, label))<br>    <span class="hljs-keyword">return</span> contents<br><br>train_data = data_loader(os.path.join(dataset, <span class="hljs-string">&#x27;train.txt&#x27;</span>))<br>dev_data = data_loader(os.path.join(dataset, <span class="hljs-string">&#x27;dev.txt&#x27;</span>))<br>test_data = data_loader(os.path.join(dataset, <span class="hljs-string">&#x27;test.txt&#x27;</span>))<br><br><span class="hljs-built_in">print</span>(test_data[:<span class="hljs-number">5</span>])<br><span class="hljs-built_in">print</span>(labels_name)<br><br></code></pre></td></tr></table></figure>
+
+<p><img src="https://s3.bmp.ovh/imgs/2023/04/25/41095902c1c2ede2.png" srcset="/img/loading.gif" lazyload alt="data detail"></p>
+<h2 id="数据编码"><a href="#数据编码" class="headerlink" title="数据编码"></a>数据编码</h2><p>读取数据后，需要对数据进行encode，nlp里的预训练模型在使用上可以粗暴地理解简单粗暴地认为通常包含两部分，一个是tokenizer，用来将句子转化为一个一个token，另一部分就是预训练模型本身，可以将每一个token特征提取成一个n维的向量，比如bert类预训练模型一般转化后的向量是768维。</p>
+<p>下图中调用了transformers包的BertTokenizer方法，加载bert预训练的tokenizer后对数据进行编码，下图中的各项参数含义如下：</p>
+<ul>
+<li><code>text</code>：要编码的文本，字符串类型。</li>
+<li><code>max_length</code>：编码后的序列的最大长度。如果输入文本长度超过了 <code>max_length</code>，则根据 <code>truncation_strategy</code> 参数截断或填充到指定长度。默认为 <code>None</code>，表示不限制序列长度。</li>
+<li><code>truncation</code>：一个布尔值，表示是否截断输入文本以适合指定的序列长度。如果为 <code>True</code>，则输入文本长度超过 <code>max_length</code> 时将被截断。如果为 <code>False</code>，则不进行截断操作。默认为 <code>True</code>。</li>
+<li><code>truncation_strategy</code>：一个字符串，表示截断策略。有两个可选值：“longest_first” 和 “only_first”。如果选择 “longest_first”，则将文本截断为长度等于 <code>max_length</code> 的最长子串；如果选择 “only_first”，则将文本截断为开头的长度等于 <code>max_length</code> 的子串。默认为 “longest_first”。</li>
+<li><code>add_special_tokens</code>：一个布尔值，表示是否在序列的开头和结尾添加特殊的标记，如 <code>[CLS]</code> 和 <code>[SEP]</code>。默认为 <code>True</code>。</li>
+<li><code>pad_to_max_length</code>：一个布尔值，表示是否填充序列以达到指定的 <code>max_length</code>。如果为 <code>True</code>，则在序列末尾添加特殊的填充标记，使序列长度达到 <code>max_length</code>。如果为 <code>False</code>，则不进行填充操作。默认为 <code>True</code>。</li>
+</ul>
+<p>对于经过pad后的句子，我们还需要构造一个mask向量用来标识哪些token是pad，这样每一条数据就会变成一个三维tuple（tokenizer后的句子向量，mask句子向量，标签label）</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> transformers <span class="hljs-keyword">import</span> BertTokenizer, BertModel<br><span class="hljs-comment"># 数据encode</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">encode_data</span>(<span class="hljs-params">tokenizer, data</span>):<br>    data_encoded = []<br>    <span class="hljs-keyword">for</span> text, label <span class="hljs-keyword">in</span> tqdm(data, total=<span class="hljs-built_in">len</span>(data)):<br>        inputs = tokenizer.encode(text=text, max_length=pad_size, truncation=<span class="hljs-literal">True</span>,<br>                                  truncation_strategy=<span class="hljs-string">&#x27;longest_first&#x27;</span>,<br>                                  add_special_tokens=<span class="hljs-literal">True</span>, pad_to_max_length=<span class="hljs-literal">True</span>)<br>        data_encoded.append((inputs, [<span class="hljs-number">1</span> <span class="hljs-keyword">if</span> x != <span class="hljs-number">0</span> <span class="hljs-keyword">else</span> <span class="hljs-number">0</span> <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> inputs], <span class="hljs-built_in">int</span>(label)))<br>    <span class="hljs-keyword">return</span> data_encoded<br><br>tokenizer = BertTokenizer.from_pretrained(bert_path)<br><br>train_data = encode_data(tokenizer, train_data)<br>dev_data = encode_data(tokenizer, dev_data)<br>test_data = encode_data(tokenizer, test_data)<br><br><span class="hljs-built_in">print</span>(train_data[<span class="hljs-number">0</span>])<br><br></code></pre></td></tr></table></figure>
+
+<p><img src="https://s3.bmp.ovh/imgs/2023/04/25/bb1807cd93b7d893.png" srcset="/img/loading.gif" lazyload alt="encode"></p>
+<p>随后我们需要进行输入的包装，一方面是将刚才生成的向量转化为张量Tensor，然后放到设置的device上进行模型训练（矩阵运算），另一方面是将数据切分成一个个batch。常见的工具类有<code>torch.utils.data</code>下的 <code>TensorDataset</code>  <code>DataLoader</code>。这两个方法往往是组合起来使用，<code>TensorDataset</code>用来整理数据，<code>DataLoader</code>用来切分和读取数据。</p>
+<p>具体来说下图中的<code>zip(*train_data)])</code>的作用是将之前的tuple list按列展开重新组合，之前的数据格式是<code>[(input_id, mask, label),...]</code>现在就会变成<code>[(input_id1,input_id2,...),(mask1,mask2,...),(label1,label2,...)]</code>然后遍历每一个元素，将元素转化成张量后放到device上；然后用<code>DataLoader</code>将其包装成迭代器，下图中的各参数含义如下：</p>
+<ul>
+<li><code>dataset</code>: 数据集对象，通常是 <code>TensorDataset</code> 类的实例。</li>
+<li><code>batch_size</code>: 每个批次的数据量大小。</li>
+<li><code>shuffle</code>: 是否在每个epoch之前对数据进行随机打乱。</li>
+<li><code>drop_last</code>: 是否将最后一个不足一个批次大小的数据扔掉。</li>
+</ul>
+<p>我们可以发现每一个句子经过tokenizer后都会变成101开头和102结尾，句子pad部分都会变成0，这三个下标其实就是对应bert预训练模型词表中的<code>[CLS]、[SEP]</code>和<code>[PAD]</code>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> torch.utils.data <span class="hljs-keyword">import</span> TensorDataset, DataLoader<br><span class="hljs-keyword">import</span> torch<br><span class="hljs-comment"># 迭代器包装</span><br>train_dataset = TensorDataset(*[torch.LongTensor(x).to(device) <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> <span class="hljs-built_in">zip</span>(*train_data)])<br>dev_dataset = TensorDataset(*[torch.LongTensor(x).to(device) <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> <span class="hljs-built_in">zip</span>(*dev_data)])<br>test_dataset = TensorDataset(*[torch.LongTensor(x).to(device) <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> <span class="hljs-built_in">zip</span>(*test_data)])<br>train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=<span class="hljs-literal">False</span>, drop_last=<span class="hljs-literal">False</span>)<br>dev_loader = DataLoader(dev_dataset, batch_size=batch_size, shuffle=<span class="hljs-literal">False</span>, drop_last=<span class="hljs-literal">False</span>)<br>test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=<span class="hljs-literal">False</span>, drop_last=<span class="hljs-literal">False</span>)<br>test_iter = <span class="hljs-built_in">iter</span>(test_loader)<br><span class="hljs-built_in">print</span>(<span class="hljs-built_in">next</span>(test_iter))<br></code></pre></td></tr></table></figure>
+
+<p><img src="https://s3.bmp.ovh/imgs/2023/04/25/7afe3c8fd93ecd09.png" srcset="/img/loading.gif" lazyload alt="data loader"></p>
+<h2 id="网络搭建"><a href="#网络搭建" class="headerlink" title="网络搭建"></a>网络搭建</h2><p>数据处理部分结束后，我们需要搭建网络，如果不关心模型内部的运算过程，实际上我们在使用深度学习网络的时候只需要知道每一个网络的输入输出是什么shape(形状)，shape的每一个维度代表什么含义即可。</p>
+<p>如图，对于下面这个示例句子，经过encode之后输入bert预训练模型，输出由两部分，第一部分包含这个句子每一个token的特征张量，第二部分是句子的<code>[[CLS]token](https://aicarrier.feishu.cn/docx/DcIYd0xjIoS7k1x9GcwcdScJnlC#part-UYw0drPzNokAPJxjdJbcVBoJnWd)</code>的特征。对于句子级别的文本分类，我们只需要关注<code>[CLS]</code>token即可，经过bert模型后句子会变成<code>[sample_number,768]</code>的形状，然后通过一个全连接层将768维压缩到需要分类的类别（图中是5），这样句子最终会变成<code>[sample_number,label_number]</code>的形状，此时第二维可以看做句子属于不同类别的概率，取概率最高的label作为预测结果即可。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> transformers <span class="hljs-keyword">import</span> BertTokenizer, BertModel<br><span class="hljs-keyword">import</span> torch<br><span class="hljs-keyword">import</span> torch.nn <span class="hljs-keyword">as</span> nn<br><br><span class="hljs-comment"># 用预训练的BERT模型进行初始化</span><br>tokenizer = BertTokenizer.from_pretrained(<span class="hljs-string">&#x27;bert-base-chinese&#x27;</span>)<br>model = BertModel.from_pretrained(<span class="hljs-string">&#x27;bert-base-chinese&#x27;</span>)<br><span class="hljs-comment"># 输入句子</span><br>sentence = <span class="hljs-string">&quot;这是一个示例句子。&quot;</span><br><span class="hljs-comment"># 使用BERT Tokenizer对句子进行编码</span><br>input_ids = tokenizer.encode(text=sentence)<br>input_ids = torch.LongTensor(input_ids).unsqueeze(<span class="hljs-number">0</span>)<br><br><span class="hljs-comment"># 使用BERT模型获取词嵌入</span><br><span class="hljs-keyword">with</span> torch.no_grad():<br>    last_hidden_states,cls_states = model(input_ids, return_dict=<span class="hljs-literal">False</span>)<br>lc = nn.Linear(<span class="hljs-number">768</span>, <span class="hljs-number">5</span>)<br>out = lc(cls_states)<br><br><span class="hljs-comment"># print(last_hidden_states)</span><br><span class="hljs-built_in">print</span>(input_ids) <span class="hljs-comment"># tokenizer后的句子张量</span><br><span class="hljs-built_in">print</span>(last_hidden_states.shape) <span class="hljs-comment"># bert输出的句子embedding张量，shape第一维表示句子，第二维表示token，第三维表示token的特征维度</span><br><span class="hljs-built_in">print</span>(cls_states.shape) <span class="hljs-comment"># bert输出的[CLS]的张量，shape第一维表示句子，第二维表示特征维度</span><br><span class="hljs-built_in">print</span>(out.shape) <span class="hljs-comment"># [CLS]张量经过全连接层后的输出，输出每一个label的概率</span><br></code></pre></td></tr></table></figure>
+
+<p><img src="https://s3.bmp.ovh/imgs/2023/04/25/58d95edf7ff3a267.png" srcset="/img/loading.gif" lazyload alt="model demo"></p>
+<p>回到本文，基于bert的文本分类网络搭建实际上也只需要两层即可，第一层bert层做特征抽取，第二层linear层做label输出，整体网络结构图如下。<code>__init__</code>部分是网络初始化各个层，<code>forward</code>部分是网络进行计算的流程。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> torch.nn <span class="hljs-keyword">as</span> nn<br><br><span class="hljs-comment"># 模型网络搭建</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">Model</span>(nn.Module):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, bert_path, hidden_size, num_classes</span>):<br>        <span class="hljs-built_in">super</span>(Model, self).__init__()<br>        self.bert = BertModel.from_pretrained(bert_path) <span class="hljs-comment"># 加载预训练模型</span><br>        <span class="hljs-keyword">for</span> param <span class="hljs-keyword">in</span> self.bert.parameters():<br>            param.requires_grad = <span class="hljs-literal">True</span> <span class="hljs-comment"># 在训练中更新bert预训练模型的权重</span><br>        self.fc = nn.Linear(hidden_size, num_classes) <span class="hljs-comment"># 全连接层分类</span><br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">forward</span>(<span class="hljs-params">self, x</span>):<br>        context = x[<span class="hljs-number">0</span>]  <span class="hljs-comment"># 输入的句子</span><br>        mask = x[<span class="hljs-number">1</span>]  <span class="hljs-comment"># 对padding部分进行mask，和句子一个size，padding部分用0表示，如：[1, 1, 1, 1, 0, 0]</span><br>        _, pooled = self.bert(context, attention_mask=mask, return_dict=<span class="hljs-literal">False</span>)<br>        out = self.fc(pooled)<br>        <span class="hljs-keyword">return</span> out<br><br><span class="hljs-comment"># 初始化模型</span><br>model = Model(bert_path, <span class="hljs-number">768</span>, num_classes).to(device)<br><span class="hljs-built_in">print</span>(model.parameters)<br><br></code></pre></td></tr></table></figure>
+
+<h2 id="优化器设置"><a href="#优化器设置" class="headerlink" title="优化器设置"></a>优化器设置</h2><p>在模型开始前还需要初始化优化器，优化器简单来讲就是让模型训练的过程中loss尽可能的逼近全局最小的算法，目前一般用AdamW优化器比较多。下面代码是对于使用了bert类型预训练模型的优化器设置，一般来讲是固定的，他的作用是把<a target="_blank" rel="noopener" href="https://www.notion.so/a4a02d8de29d469ca74ea3af34deece0">bert层的学习率设置的低一点</a>，然后对于有权重衰减层设置权重衰减，没有权重衰减层设置权重衰减为0。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> transformers <span class="hljs-keyword">import</span> AdamW<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">get_optimizer</span>(<span class="hljs-params">model</span>):<br>    param_optimizer = <span class="hljs-built_in">list</span>(model.named_parameters())<br>    no_decay = [<span class="hljs-string">&#x27;bias&#x27;</span>, <span class="hljs-string">&#x27;LayerNorm.bias&#x27;</span>, <span class="hljs-string">&#x27;LayerNorm.weight&#x27;</span>]<br>    bert_param_ids = <span class="hljs-built_in">list</span>(<span class="hljs-built_in">map</span>(<span class="hljs-built_in">id</span>, param_optimizer))<br>    no_weight_decay_params = [x[<span class="hljs-number">1</span>] <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> <span class="hljs-built_in">filter</span>(<br>        <span class="hljs-keyword">lambda</span> name_w: <span class="hljs-built_in">any</span>(nwd <span class="hljs-keyword">in</span> name_w[<span class="hljs-number">0</span>] <span class="hljs-keyword">for</span> nwd <span class="hljs-keyword">in</span> no_decay), model.named_parameters())]<br>    no_weight_decay_param_ids = <span class="hljs-built_in">list</span>(<span class="hljs-built_in">map</span>(<span class="hljs-built_in">id</span>, [x[<span class="hljs-number">1</span>] <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> no_weight_decay_params]))<br>    bert_base_params = <span class="hljs-built_in">filter</span>(<span class="hljs-keyword">lambda</span> p: <span class="hljs-built_in">id</span>(p) <span class="hljs-keyword">in</span> bert_param_ids <span class="hljs-keyword">and</span> <span class="hljs-built_in">id</span>(p) <span class="hljs-keyword">not</span> <span class="hljs-keyword">in</span> no_weight_decay_param_ids,<br>                              model.parameters())<br>    bert_no_weight_decay_params = <span class="hljs-built_in">filter</span>(<span class="hljs-keyword">lambda</span> p: <span class="hljs-built_in">id</span>(p) <span class="hljs-keyword">in</span> bert_param_ids <span class="hljs-keyword">and</span> <span class="hljs-built_in">id</span>(p) <span class="hljs-keyword">in</span> no_weight_decay_param_ids,<br>                                         model.parameters())<br>    base_no_weight_decay_params = <span class="hljs-built_in">filter</span>(<br>        <span class="hljs-keyword">lambda</span> p: <span class="hljs-built_in">id</span>(p) <span class="hljs-keyword">not</span> <span class="hljs-keyword">in</span> bert_param_ids <span class="hljs-keyword">and</span> <span class="hljs-built_in">id</span>(p) <span class="hljs-keyword">in</span> no_weight_decay_param_ids,<br>        model.parameters())<br>    base_params = <span class="hljs-built_in">filter</span>(<span class="hljs-keyword">lambda</span> p: <span class="hljs-built_in">id</span>(p) <span class="hljs-keyword">not</span> <span class="hljs-keyword">in</span> bert_param_ids <span class="hljs-keyword">and</span> <span class="hljs-built_in">id</span>(p) <span class="hljs-keyword">not</span> <span class="hljs-keyword">in</span> no_weight_decay_param_ids,<br>                         model.parameters())<br>    params = [&#123;<span class="hljs-string">&quot;params&quot;</span>: bert_base_params, <span class="hljs-string">&quot;lr&quot;</span>: learning_rate * bert_lr_ratio&#125;,<br>              &#123;<span class="hljs-string">&quot;params&quot;</span>: bert_no_weight_decay_params, <span class="hljs-string">&quot;lr&quot;</span>: learning_rate * bert_lr_ratio,<br>               <span class="hljs-string">&quot;weight_decay&quot;</span>: <span class="hljs-number">0.0</span>&#125;,<br>              &#123;<span class="hljs-string">&quot;params&quot;</span>: base_no_weight_decay_params, <span class="hljs-string">&quot;lr&quot;</span>: learning_rate, <span class="hljs-string">&quot;weight_decay&quot;</span>: <span class="hljs-number">0.0</span>&#125;,<br>              &#123;<span class="hljs-string">&quot;params&quot;</span>: base_params, <span class="hljs-string">&quot;lr&quot;</span>: learning_rate&#125;]<br><br>    <span class="hljs-comment"># 设置AdamW优化器</span><br>    optimizer = AdamW(params, lr=learning_rate, weight_decay=weight_decay)<br><br>    <span class="hljs-keyword">return</span> optimizer<br><br>optimizer = get_optimizer(model)<br><br></code></pre></td></tr></table></figure>
+
+<h2 id="模型训练-1"><a href="#模型训练-1" class="headerlink" title="模型训练"></a>模型训练</h2><p>初始化优化器，搭建完模型网路结构后就可以开始模型训练了。一般来说模型训练的过程也比较固定，<code>模型输入-&gt;模型输出-&gt;loss计算-&gt;反向传播-&gt;优化器step-&gt;模型评估-&gt;模型保存</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> numpy <span class="hljs-keyword">as</span> np<br><span class="hljs-keyword">import</span> torch.nn.functional <span class="hljs-keyword">as</span> F<br><span class="hljs-keyword">from</span> sklearn <span class="hljs-keyword">import</span> metrics<br><span class="hljs-keyword">from</span> sklearn.metrics <span class="hljs-keyword">import</span> f1_score<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">evaluate</span>(<span class="hljs-params">model, data_iter</span>):<br>    model.<span class="hljs-built_in">eval</span>()<br>    loss_total = <span class="hljs-number">0</span><br>    predict_all = np.array([], dtype=<span class="hljs-built_in">int</span>)<br>    labels_all = np.array([], dtype=<span class="hljs-built_in">int</span>)<br>    <span class="hljs-keyword">with</span> torch.no_grad():<br>        <span class="hljs-keyword">for</span> step, batch <span class="hljs-keyword">in</span> tqdm(data_iter):<br>            batch = [x.to(device) <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> batch]<br>            outputs = model((batch[<span class="hljs-number">0</span>], batch[<span class="hljs-number">1</span>]))<br>            <span class="hljs-comment"># print(labels)</span><br>            loss = F.cross_entropy(outputs, batch[-<span class="hljs-number">1</span>])<br>            loss_total += loss<br>            labels = batch[-<span class="hljs-number">1</span>].data.cpu().numpy()<br>            predic = torch.<span class="hljs-built_in">max</span>(outputs.data, <span class="hljs-number">1</span>)[<span class="hljs-number">1</span>].cpu().numpy()<br>            labels_all = np.append(labels_all, labels)<br>            predict_all = np.append(predict_all, predic)<br><br>    acc = metrics.accuracy_score(labels_all, predict_all)<br>    f1 = f1_score(labels_all, predict_all, average=<span class="hljs-string">&#x27;macro&#x27;</span>)<br>    report = metrics.classification_report(labels_all, predict_all, target_names=labels_name, digits=<span class="hljs-number">4</span>)<br>    confusion = metrics.confusion_matrix(labels_all, predict_all)<br><br>    <span class="hljs-keyword">return</span> acc, f1, loss_total / (<span class="hljs-built_in">len</span>(data_iter) + <span class="hljs-number">1e-10</span>), report, confusion<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">test</span>(<span class="hljs-params">model, test_iter</span>):<br>    <span class="hljs-comment"># test</span><br>    model.load_state_dict(torch.load(save_path))<br>    model.<span class="hljs-built_in">eval</span>()<br>    test_acc, test_f1, test_loss, test_report, test_confusion = evaluate(model, test_iter)<br>    msg = <span class="hljs-string">&#x27;Test Loss: &#123;0:&gt;5.2&#125;,  Test Acc: &#123;1:&gt;6.2%&#125;, Test F1:&#123;2:&gt;6.2%&#125;&#x27;</span><br>    logger.info(msg.<span class="hljs-built_in">format</span>(test_loss, test_acc, test_f1))<br>    logger.info(<span class="hljs-string">&quot;Precision, Recall and F1-Score...&quot;</span>)<br>    logger.info(test_report)<br>    logger.info(<span class="hljs-string">&quot;Confusion Matrix...&quot;</span>)<br>    logger.info(test_confusion)<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">train</span>(<span class="hljs-params">model, train_iter, dev_iter, test_iter, optimizer</span>):<br>    model.train()<br>    dev_best_f1 = <span class="hljs-built_in">float</span>(<span class="hljs-string">&#x27;-inf&#x27;</span>)<br>    last_improve_epoch = <span class="hljs-number">0</span><br>    model.train()<br>    <span class="hljs-keyword">for</span> epoch <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(num_epochs):<br>        logger.info(<span class="hljs-string">&#x27;Epoch [&#123;&#125;/&#123;&#125;]&#x27;</span>.<span class="hljs-built_in">format</span>(epoch + <span class="hljs-number">1</span>, num_epochs))<br><br>        <span class="hljs-comment"># 记录变量</span><br>        train_labels_all = np.array([], dtype=<span class="hljs-built_in">int</span>)<br>        train_predicts_all = np.array([], dtype=<span class="hljs-built_in">int</span>)<br>        train_loss_list = []<br>        t = tqdm(train_iter, leave=<span class="hljs-literal">False</span>, total=<span class="hljs-built_in">len</span>(train_iter), desc=<span class="hljs-string">&#x27;Training&#x27;</span>)<br>        <span class="hljs-keyword">for</span> step, batch <span class="hljs-keyword">in</span> <span class="hljs-built_in">enumerate</span>(t):<br>            batch = [x.to(device) <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> batch]<br>            model.train()<br>            model.zero_grad()<br>            outputs = model((batch[<span class="hljs-number">0</span>], batch[<span class="hljs-number">1</span>]))<br>            loss = F.cross_entropy(outputs, batch[-<span class="hljs-number">1</span>])<br>            train_loss_list.append(loss.item())<br>            loss.backward()<br>            torch.nn.utils.clip_grad_norm_(model.parameters(), <span class="hljs-number">1.0</span>)  <span class="hljs-comment"># 梯度裁剪</span><br>            optimizer.step()<br>            <span class="hljs-comment"># 真实标签和预测标签</span><br><br>            predicts = torch.<span class="hljs-built_in">max</span>(outputs.data, <span class="hljs-number">1</span>)[<span class="hljs-number">1</span>].cpu()<br>            labels_train = batch[-<span class="hljs-number">1</span>].cpu().data.numpy()<br>            train_labels_all = np.append(train_labels_all, labels_train)<br>            train_predicts_all = np.append(train_predicts_all, predicts)<br><br>        <span class="hljs-comment"># 训练集评估</span><br>        train_loss = <span class="hljs-built_in">sum</span>(train_loss_list) / (<span class="hljs-built_in">len</span>(train_loss_list) + <span class="hljs-number">1e-10</span>)<br>        train_acc = metrics.accuracy_score(train_labels_all, train_predicts_all)<br>        train_f1 = metrics.f1_score(train_labels_all, train_predicts_all, average=<span class="hljs-string">&#x27;macro&#x27;</span>)<br><br>        dev_acc, dev_f1, dev_loss, report, confusion = evaluate(model, dev_iter)<br>        msg = <span class="hljs-string">&#x27;Train Loss: &#123;0:&gt;5.6&#125;,  Train Acc: &#123;1:&gt;6.4%&#125;,  Train F1: &#123;2:&gt;6.4%&#125;,  Val Loss: &#123;3:&gt;5.4&#125;,  Val Acc: &#123;4:&gt;6.4%&#125;,  Val F1: &#123;5:&gt;6.4%&#125;&#x27;</span><br>        logger.info(msg.<span class="hljs-built_in">format</span>(train_loss, train_acc, train_f1, dev_loss, dev_acc, dev_f1))<br>        logger.info(<span class="hljs-string">&quot;Precision, Recall and F1-Score...&quot;</span>)<br>        logger.info(report)<br>        logger.info(<span class="hljs-string">&quot;Confusion Matrix...&quot;</span>)<br>        logger.info(confusion)<br><br>        <span class="hljs-keyword">if</span> dev_f1 &gt; dev_best_f1:<br>            dev_best_f1 = dev_f1<br>            torch.save(model.state_dict(), save_path)<br>            last_improve_epoch = epoch<br><br>        <span class="hljs-keyword">if</span> epoch - last_improve_epoch &gt; patience:<br>            logger.info(<span class="hljs-string">&quot;No optimization for a long time, auto-stopping...&quot;</span>)<br>            <span class="hljs-keyword">break</span><br><br>    test(model, test_iter)<br><br>train(model,train_loader,dev_loader,test_loader,optimizer)<br><br></code></pre></td></tr></table></figure>
+
+<h2 id="训练结果"><a href="#训练结果" class="headerlink" title="训练结果"></a>训练结果</h2><p>文本的实验结果如下</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><code class="hljs python">023-04-<span class="hljs-number">21</span> <span class="hljs-number">16</span>:08:<span class="hljs-number">10</span>,<span class="hljs-number">560</span> - bert_cls.py[line:<span class="hljs-number">205</span>] - INFO: No optimization <span class="hljs-keyword">for</span> a long time, auto-stopping...<br><span class="hljs-number">2023</span>-04-<span class="hljs-number">21</span> <span class="hljs-number">16</span>:08:<span class="hljs-number">15</span>,<span class="hljs-number">798</span> - bert_cls.py[line:<span class="hljs-number">149</span>] - INFO: Test Loss:  <span class="hljs-number">0.52</span>,  Test Acc: <span class="hljs-number">92.00</span>%, Test F1:<span class="hljs-number">92.00</span>%<br><span class="hljs-number">2023</span>-04-<span class="hljs-number">21</span> <span class="hljs-number">16</span>:08:<span class="hljs-number">15</span>,<span class="hljs-number">798</span> - bert_cls.py[line:<span class="hljs-number">150</span>] - INFO: Precision, Recall <span class="hljs-keyword">and</span> F1-Score...<br><span class="hljs-number">2023</span>-04-<span class="hljs-number">21</span> <span class="hljs-number">16</span>:08:<span class="hljs-number">15</span>,<span class="hljs-number">798</span> - bert_cls.py[line:<span class="hljs-number">151</span>] - INFO:<br>                 precision    recall  f1-score   support<br><br>          体育     <span class="hljs-number">0.9542</span>    <span class="hljs-number">0.9580</span>    <span class="hljs-number">0.9561</span>       <span class="hljs-number">500</span><br>          娱乐     <span class="hljs-number">0.8650</span>    <span class="hljs-number">0.9480</span>    <span class="hljs-number">0.9046</span>       <span class="hljs-number">500</span><br>          家居     <span class="hljs-number">0.9502</span>    <span class="hljs-number">0.8780</span>    <span class="hljs-number">0.9127</span>       <span class="hljs-number">500</span><br>          彩票     <span class="hljs-number">0.9801</span>    <span class="hljs-number">0.9860</span>    <span class="hljs-number">0.9831</span>       <span class="hljs-number">500</span><br>          房产     <span class="hljs-number">0.8776</span>    <span class="hljs-number">0.9320</span>    <span class="hljs-number">0.9040</span>       <span class="hljs-number">500</span><br>          教育     <span class="hljs-number">0.9434</span>    <span class="hljs-number">0.9660</span>    <span class="hljs-number">0.9545</span>       <span class="hljs-number">500</span><br>          时尚     <span class="hljs-number">0.9584</span>    <span class="hljs-number">0.9220</span>    <span class="hljs-number">0.9399</span>       <span class="hljs-number">500</span><br>          时政     <span class="hljs-number">0.8945</span>    <span class="hljs-number">0.9160</span>    <span class="hljs-number">0.9051</span>       <span class="hljs-number">500</span><br>          星座     <span class="hljs-number">0.9841</span>    <span class="hljs-number">0.9920</span>    <span class="hljs-number">0.9880</span>       <span class="hljs-number">500</span><br>          游戏     <span class="hljs-number">0.9467</span>    <span class="hljs-number">0.9240</span>    <span class="hljs-number">0.9352</span>       <span class="hljs-number">500</span><br>          社会     <span class="hljs-number">0.9251</span>    <span class="hljs-number">0.9140</span>    <span class="hljs-number">0.9195</span>       <span class="hljs-number">500</span><br>          科技     <span class="hljs-number">0.8264</span>    <span class="hljs-number">0.8760</span>    <span class="hljs-number">0.8505</span>       <span class="hljs-number">500</span><br>          股票     <span class="hljs-number">0.8592</span>    <span class="hljs-number">0.8180</span>    <span class="hljs-number">0.8381</span>       <span class="hljs-number">500</span><br>          财经     <span class="hljs-number">0.9300</span>    <span class="hljs-number">0.8500</span>    <span class="hljs-number">0.8882</span>       <span class="hljs-number">500</span><br><br>    accuracy                         <span class="hljs-number">0.9200</span>      <span class="hljs-number">7000</span><br>   macro avg     <span class="hljs-number">0.9211</span>    <span class="hljs-number">0.9200</span>    <span class="hljs-number">0.9200</span>      <span class="hljs-number">7000</span><br>weighted avg     <span class="hljs-number">0.9211</span>    <span class="hljs-number">0.9200</span>    <span class="hljs-number">0.9200</span>      <span class="hljs-number">7000</span><br><br><span class="hljs-number">2023</span>-04-<span class="hljs-number">21</span> <span class="hljs-number">16</span>:08:<span class="hljs-number">15</span>,<span class="hljs-number">798</span> - bert_cls.py[line:<span class="hljs-number">152</span>] - INFO: Confusion Matrix...<br><span class="hljs-number">2023</span>-04-<span class="hljs-number">21</span> <span class="hljs-number">16</span>:08:<span class="hljs-number">15</span>,<span class="hljs-number">798</span> - bert_cls.py[line:<span class="hljs-number">153</span>] - INFO:<br> [[<span class="hljs-number">479</span>  <span class="hljs-number">13</span>   <span class="hljs-number">0</span>   <span class="hljs-number">5</span>   <span class="hljs-number">0</span>   <span class="hljs-number">0</span>   <span class="hljs-number">1</span>   <span class="hljs-number">1</span>   <span class="hljs-number">0</span>   <span class="hljs-number">0</span>   <span class="hljs-number">1</span>   <span class="hljs-number">0</span>   <span class="hljs-number">0</span>   <span class="hljs-number">0</span>]<br> [  <span class="hljs-number">6</span> <span class="hljs-number">474</span>   <span class="hljs-number">1</span>   <span class="hljs-number">2</span>   <span class="hljs-number">0</span>   <span class="hljs-number">2</span>   <span class="hljs-number">4</span>   <span class="hljs-number">2</span>   <span class="hljs-number">2</span>   <span class="hljs-number">2</span>   <span class="hljs-number">3</span>   <span class="hljs-number">1</span>   <span class="hljs-number">0</span>   <span class="hljs-number">1</span>]<br> [  <span class="hljs-number">0</span>   <span class="hljs-number">8</span> <span class="hljs-number">439</span>   <span class="hljs-number">0</span>  <span class="hljs-number">25</span>   <span class="hljs-number">1</span>   <span class="hljs-number">2</span>   <span class="hljs-number">2</span>   <span class="hljs-number">2</span>   <span class="hljs-number">2</span>   <span class="hljs-number">2</span>  <span class="hljs-number">12</span>   <span class="hljs-number">3</span>   <span class="hljs-number">2</span>]<br> [  <span class="hljs-number">6</span>   <span class="hljs-number">1</span>   <span class="hljs-number">0</span> <span class="hljs-number">493</span>   <span class="hljs-number">0</span>   <span class="hljs-number">0</span>   <span class="hljs-number">0</span>   <span class="hljs-number">0</span>   <span class="hljs-number">0</span>   <span class="hljs-number">0</span>   <span class="hljs-number">0</span>   <span class="hljs-number">0</span>   <span class="hljs-number">0</span>   <span class="hljs-number">0</span>]<br> [  <span class="hljs-number">1</span>   <span class="hljs-number">3</span>   <span class="hljs-number">6</span>   <span class="hljs-number">0</span> <span class="hljs-number">466</span>   <span class="hljs-number">0</span>   <span class="hljs-number">1</span>   <span class="hljs-number">1</span>   <span class="hljs-number">0</span>   <span class="hljs-number">1</span>   <span class="hljs-number">4</span>   <span class="hljs-number">6</span>   <span class="hljs-number">6</span>   <span class="hljs-number">5</span>]<br> [  <span class="hljs-number">0</span>   <span class="hljs-number">2</span>   <span class="hljs-number">0</span>   <span class="hljs-number">0</span>   <span class="hljs-number">1</span> <span class="hljs-number">483</span>   <span class="hljs-number">1</span>   <span class="hljs-number">2</span>   <span class="hljs-number">3</span>   <span class="hljs-number">1</span>   <span class="hljs-number">5</span>   <span class="hljs-number">2</span>   <span class="hljs-number">0</span>   <span class="hljs-number">0</span>]<br> [  <span class="hljs-number">1</span>  <span class="hljs-number">17</span>   <span class="hljs-number">7</span>   <span class="hljs-number">0</span>   <span class="hljs-number">7</span>   <span class="hljs-number">2</span> <span class="hljs-number">461</span>   <span class="hljs-number">1</span>   <span class="hljs-number">0</span>   <span class="hljs-number">0</span>   <span class="hljs-number">2</span>   <span class="hljs-number">2</span>   <span class="hljs-number">0</span>   <span class="hljs-number">0</span>]<br> [  <span class="hljs-number">1</span>   <span class="hljs-number">4</span>   <span class="hljs-number">0</span>   <span class="hljs-number">0</span>   <span class="hljs-number">5</span>   <span class="hljs-number">5</span>   <span class="hljs-number">2</span> <span class="hljs-number">458</span>   <span class="hljs-number">0</span>   <span class="hljs-number">1</span>   <span class="hljs-number">8</span>   <span class="hljs-number">7</span>   <span class="hljs-number">5</span>   <span class="hljs-number">4</span>]<br> [  <span class="hljs-number">0</span>   <span class="hljs-number">0</span>   <span class="hljs-number">0</span>   <span class="hljs-number">0</span>   <span class="hljs-number">0</span>   <span class="hljs-number">1</span>   <span class="hljs-number">3</span>   <span class="hljs-number">0</span> <span class="hljs-number">496</span>   <span class="hljs-number">0</span>   <span class="hljs-number">0</span>   <span class="hljs-number">0</span>   <span class="hljs-number">0</span>   <span class="hljs-number">0</span>]<br> [  <span class="hljs-number">3</span>   <span class="hljs-number">9</span>   <span class="hljs-number">1</span>   <span class="hljs-number">0</span>   <span class="hljs-number">1</span>   <span class="hljs-number">1</span>   <span class="hljs-number">4</span>   <span class="hljs-number">1</span>   <span class="hljs-number">0</span> <span class="hljs-number">462</span>   <span class="hljs-number">1</span>  <span class="hljs-number">15</span>   <span class="hljs-number">2</span>   <span class="hljs-number">0</span>]<br> [  <span class="hljs-number">4</span>   <span class="hljs-number">5</span>   <span class="hljs-number">1</span>   <span class="hljs-number">1</span>   <span class="hljs-number">1</span>  <span class="hljs-number">11</span>   <span class="hljs-number">2</span>   <span class="hljs-number">7</span>   <span class="hljs-number">0</span>   <span class="hljs-number">0</span> <span class="hljs-number">457</span>  <span class="hljs-number">10</span>   <span class="hljs-number">1</span>   <span class="hljs-number">0</span>]<br> [  <span class="hljs-number">0</span>   <span class="hljs-number">8</span>   <span class="hljs-number">1</span>   <span class="hljs-number">1</span>   <span class="hljs-number">6</span>   <span class="hljs-number">3</span>   <span class="hljs-number">0</span>  <span class="hljs-number">10</span>   <span class="hljs-number">0</span>  <span class="hljs-number">12</span>   <span class="hljs-number">8</span> <span class="hljs-number">438</span>  <span class="hljs-number">12</span>   <span class="hljs-number">1</span>]<br> [  <span class="hljs-number">0</span>   <span class="hljs-number">1</span>   <span class="hljs-number">3</span>   <span class="hljs-number">0</span>  <span class="hljs-number">14</span>   <span class="hljs-number">2</span>   <span class="hljs-number">0</span>  <span class="hljs-number">21</span>   <span class="hljs-number">0</span>   <span class="hljs-number">6</span>   <span class="hljs-number">0</span>  <span class="hljs-number">25</span> <span class="hljs-number">409</span>  <span class="hljs-number">19</span>]<br> [  <span class="hljs-number">1</span>   <span class="hljs-number">3</span>   <span class="hljs-number">3</span>   <span class="hljs-number">1</span>   <span class="hljs-number">5</span>   <span class="hljs-number">1</span>   <span class="hljs-number">0</span>   <span class="hljs-number">6</span>   <span class="hljs-number">1</span>   <span class="hljs-number">1</span>   <span class="hljs-number">3</span>  <span class="hljs-number">12</span>  <span class="hljs-number">38</span> <span class="hljs-number">425</span>]]<br><br></code></pre></td></tr></table></figure>
+
+<h1 id="模型预测和gradio应用简单构建"><a href="#模型预测和gradio应用简单构建" class="headerlink" title="模型预测和gradio应用简单构建"></a>模型预测和gradio应用简单构建</h1><p>训练好模型后，如果想使用模型进行预测，步骤其实和训练类似，而且不需要反向传播和任何的评价指标统计，整体流程一般是<code>输入句子-&gt;encode编码-&gt;模型输入输出-&gt;格式化输出</code>。这地方需要注意的是，如果训练保存模型的设备和加载模型的设备不一致，需要在<code>torch.load(save_path, map_location=device)</code>的时候用<code>map_location</code>参数来把二者统一起来，不然会产生模型读取错误。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> os<br><span class="hljs-keyword">from</span> transformers <span class="hljs-keyword">import</span> BertTokenizer, BertModel<br><span class="hljs-keyword">import</span> torch<br><span class="hljs-keyword">import</span> torch.nn <span class="hljs-keyword">as</span> nn<br><span class="hljs-keyword">import</span> gradio <span class="hljs-keyword">as</span> gr<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">Model</span>(nn.Module):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, bert_path, hidden_size, num_classes</span>):<br>        <span class="hljs-built_in">super</span>(Model, self).__init__()<br>        self.bert = BertModel.from_pretrained(bert_path)<br>        <span class="hljs-keyword">for</span> param <span class="hljs-keyword">in</span> self.bert.parameters():<br>            param.requires_grad = <span class="hljs-literal">True</span><br>        self.fc = nn.Linear(hidden_size, num_classes)<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">forward</span>(<span class="hljs-params">self, x</span>):<br>        context = x[<span class="hljs-number">0</span>]  <span class="hljs-comment"># 输入的句子</span><br>        mask = x[<span class="hljs-number">1</span>]  <span class="hljs-comment"># 对padding部分进行mask，和句子一个size，padding部分用0表示，如：[1, 1, 1, 1, 0, 0]</span><br>        _, pooled = self.bert(context, attention_mask=mask, return_dict=<span class="hljs-literal">False</span>)<br>        out = self.fc(pooled)<br>        <span class="hljs-keyword">return</span> out<br><br>dataset = <span class="hljs-string">&#x27;data/THUCnews&#x27;</span><br>labels_name = [w.strip() <span class="hljs-keyword">for</span> w <span class="hljs-keyword">in</span> <span class="hljs-built_in">open</span>(os.path.join(dataset, <span class="hljs-string">&#x27;class.txt&#x27;</span>), <span class="hljs-string">&#x27;r&#x27;</span>, encoding=<span class="hljs-string">&#x27;utf8&#x27;</span>).readlines()]<br>device = torch.device(<span class="hljs-string">&#x27;cpu&#x27;</span>)  <span class="hljs-comment"># 设备cpu</span><br>bert_path = <span class="hljs-string">&#x27;bert-base-chinese&#x27;</span><br>num_classes = <span class="hljs-built_in">len</span>(labels_name)<br>save_path = <span class="hljs-string">&#x27;saved_dict/bert.ckpt&#x27;</span><br>pad_size = <span class="hljs-number">32</span><br><br><span class="hljs-comment"># 用预训练的BERT模型进行初始化</span><br>tokenizer = BertTokenizer.from_pretrained(bert_path)<br>model = Model(bert_path, <span class="hljs-number">768</span>, num_classes).to(device)<br><br><span class="hljs-comment"># 加载模型权重。</span><br>model.load_state_dict(torch.load(save_path, map_location=device))<br>model.<span class="hljs-built_in">eval</span>()<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">predict</span>(<span class="hljs-params">sentence</span>):<br>    inputs = tokenizer.encode(text=sentence, max_length=pad_size, truncation=<span class="hljs-literal">True</span>,<br>                              truncation_strategy=<span class="hljs-string">&#x27;longest_first&#x27;</span>,<br>                              add_special_tokens=<span class="hljs-literal">True</span>, pad_to_max_length=<span class="hljs-literal">True</span>)<br>    data_encode = (inputs, [<span class="hljs-number">1</span> <span class="hljs-keyword">if</span> x != <span class="hljs-number">0</span> <span class="hljs-keyword">else</span> <span class="hljs-number">0</span> <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> inputs])<br>    input_id = torch.LongTensor(data_encode[<span class="hljs-number">0</span>]).unsqueeze(<span class="hljs-number">0</span>).to(device)<br>    input_mask = torch.LongTensor(data_encode[<span class="hljs-number">1</span>]).unsqueeze(<span class="hljs-number">0</span>).to(device)<br><br>    <span class="hljs-keyword">with</span> torch.no_grad():<br>        outputs = model((input_id, input_mask))<br>        predicts = torch.<span class="hljs-built_in">max</span>(outputs.data, <span class="hljs-number">1</span>)[<span class="hljs-number">1</span>].cpu()<br><br>    <span class="hljs-keyword">return</span> labels_name[predicts[<span class="hljs-number">0</span>]]<br><br><span class="hljs-comment"># gradio封装</span><br>iface = gr.Interface(fn=predict, inputs=<span class="hljs-string">&quot;text&quot;</span>, outputs=<span class="hljs-string">&quot;text&quot;</span>)<br>iface.launch()<br><br></code></pre></td></tr></table></figure>
+
+<h1 id="相关代码"><a href="#相关代码" class="headerlink" title="相关代码"></a>相关代码</h1><p><a target="_blank" rel="noopener" href="https://github.com/leidaoyu/text_classification_demo">https://github.com/leidaoyu/text_classification_demo</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">#深度学习</a>
+      
+        <a href="/tags/%E6%96%87%E6%9C%AC%E5%88%86%E7%B1%BB/">#文本分类</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>文本分类任务基本流程</div>
+      <div>https://shouldbeldy.github.io/2023/04/25/文本分类任务基本流程/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Daoyu Lei</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年4月25日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/04/04/MYSQL%E6%B7%B1%E5%88%86%E9%A1%B5%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" title="MYSQL深分页性能优化">
+                        <span class="hidden-mobile">MYSQL深分页性能优化</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+      
+<p style="text-align:center">BUILD BY Shouldbe@2022</p> <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>框架Hexo</span></a> <i class="iconfont icon-code"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>主题Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

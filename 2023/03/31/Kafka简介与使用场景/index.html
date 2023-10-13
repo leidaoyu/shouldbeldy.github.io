@@ -1,0 +1,707 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/cat.png">
+  <link rel="icon" href="/img/cat.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#222135">
+  <meta name="author" content="Daoyu Lei">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Kafka简介与使用场景为什么要引入消息队列假设我们现在有一个在线购物网站，用户在网站上下单购买商品，网站需要向订单系统发送订单信息，订单系统再根据订单信息进行处理和发货，如果我们不引入任何中间件，网站和订单系统之间的交互可能会出现以下问题：  高并发流量导致宕机：当用户下单并提交订单后，网站需要立即向订单系统发送订单信息，如果此时用户量很大，会导致高并发流量，容易使网站宕机或响应时间过长，影响用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Kafka简介与使用场景">
+<meta property="og:url" content="https://shouldbeldy.github.io/2023/03/31/Kafka%E7%AE%80%E4%BB%8B%E4%B8%8E%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF/index.html">
+<meta property="og:site_name" content="ShouldbeBlog">
+<meta property="og:description" content="Kafka简介与使用场景为什么要引入消息队列假设我们现在有一个在线购物网站，用户在网站上下单购买商品，网站需要向订单系统发送订单信息，订单系统再根据订单信息进行处理和发货，如果我们不引入任何中间件，网站和订单系统之间的交互可能会出现以下问题：  高并发流量导致宕机：当用户下单并提交订单后，网站需要立即向订单系统发送订单信息，如果此时用户量很大，会导致高并发流量，容易使网站宕机或响应时间过长，影响用">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s3.bmp.ovh/imgs/2023/03/31/89f3c593b9ed077d.jpeg">
+<meta property="article:published_time" content="2023-03-31T09:06:09.000Z">
+<meta property="article:modified_time" content="2023-03-31T09:12:24.411Z">
+<meta property="article:author" content="Daoyu Lei">
+<meta property="article:tag" content="中间件">
+<meta property="article:tag" content="Kafka">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://s3.bmp.ovh/imgs/2023/03/31/89f3c593b9ed077d.jpeg">
+  
+  
+  
+  <title>Kafka简介与使用场景 - ShouldbeBlog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"shouldbeldy.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Shouldbe</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/background.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Kafka简介与使用场景"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-03-31 17:06" pubdate>
+          2023年3月31日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.7k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          40 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Kafka简介与使用场景</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="Kafka简介与使用场景"><a href="#Kafka简介与使用场景" class="headerlink" title="Kafka简介与使用场景"></a>Kafka简介与使用场景</h1><h1 id="为什么要引入消息队列"><a href="#为什么要引入消息队列" class="headerlink" title="为什么要引入消息队列"></a>为什么要引入消息队列</h1><p>假设我们现在有一个在线购物网站，用户在网站上下单购买商品，网站需要向订单系统发送订单信息，订单系统再根据订单信息进行处理和发货，如果我们不引入任何中间件，网站和订单系统之间的交互可能会出现以下问题：</p>
+<ol>
+<li>高并发流量导致宕机：当用户下单并提交订单后，网站需要立即向订单系统发送订单信息，如果此时用户量很大，会导致高并发流量，容易使网站宕机或响应时间过长，影响用户体验和业务运营。</li>
+<li>系统耦合度高：如果网站直接调用订单系统的 API 来处理订单信息，会导致网站和订单系统之间的耦合度高，使得系统难以扩展和维护。</li>
+<li>单点故障：如果网站和订单系统之间采用同步的方式进行交互，会使得网站和订单系统之间出现单点故障，当其中一个系统出现问题时，整个系统都将受到影响。</li>
+<li>数据不一致：如果网站和订单系统之间采用异步的方式进行交互，但是没有消息队列的支持，可能会导致数据不一致的问题。例如，当网站发送订单信息到订单系统后，由于网络问题或者订单系统出现问题，订单系统无法处理订单信息，会导致订单信息丢失或者延迟，从而使得网站和订单系统之间的数据不一致。</li>
+</ol>
+<p><img src="https://s3.bmp.ovh/imgs/2023/03/31/99cc342194486e05.png" srcset="/img/loading.gif" lazyload alt="非消息队列"></p>
+<p>为了解决以上问题，我们可以考虑将用户下单的订单信息写入消息队列中，订单系统异步地从队列中读取订单信息，并进行处理和发货。由于订单系统是异步处理订单信息，因此可以避免网站因为高并发流量而宕机，同时也降低了网站和订单系统之间的耦合度，提高了系统的可扩展性和可维护性。</p>
+<p>此外，如果有多个订单系统需要处理订单信息，也可以通过消息队列来实现数据分发和共享，将订单信息写入消息队列中，各个订单系统可以异步地从队列中读取订单信息进行处理，提高了订单信息的利用率和共享效率。</p>
+<p><img src="https://s3.bmp.ovh/imgs/2023/03/31/a4ad2a275e58fa01.png" srcset="/img/loading.gif" lazyload alt="消息队列"></p>
+<p>通过以上实例，可以看出消息队列在电商购物场景中的作用和必要性，包括解耦、流量削峰、异步处理、数据分发和共享等。同时，消息队列也可以通过水平扩展和容错机制来提高系统的可伸缩性和可靠性，是实现大规模高并发系统的重要技术手段之一。</p>
+<h1 id="Kafka是什么"><a href="#Kafka是什么" class="headerlink" title="Kafka是什么"></a>Kafka是什么</h1><p>Kafka是一个由Scala和Java编写的企业级的消息发布和订阅系统，最早是由Linkedin公司开发，最终开源到Apache软件基金会的项目。Kafka是一个分布式的，支持分区的，多副本的和多订阅者的高吞吐量的消息队列系统，被广泛应用在应用解耦、异步处理、限流削峰和消息驱动等场景。</p>
+<h1 id="Kafka的架构和基本概念"><a href="#Kafka的架构和基本概念" class="headerlink" title="Kafka的架构和基本概念"></a>Kafka的架构和基本概念</h1><p><img src="https://s3.bmp.ovh/imgs/2023/03/31/fc4ad56f4390f436.png" srcset="/img/loading.gif" lazyload alt="Kafka架构"></p>
+<ol>
+<li><p>Topic：消息的类别，主要用于对消息进行逻辑上的区分，每条发送到Kafka集群的消息都需要有一个指定的Topic，消费者根据Topic对指定的消息进行消费，类似于关系数据库的表，需要获取什么topic的信息就监听对应的topic即可</p>
+<p> <img src="https://s3.bmp.ovh/imgs/2023/03/31/41cbeff00ace1798.png" srcset="/img/loading.gif" lazyload alt="Topic"></p>
+</li>
+<li><p>Partition：消息的分区，Partition是一个物理上的概念，相当于一个文件夹，Kafka会为每个topic的每个分区创建一个文件夹，一个Topic的消息会存储在一个或者多个Partition中，Topic 是一个逻辑概念，而 Partition 是分布式存储单元。</p>
+<p> <img src="https://s3.bmp.ovh/imgs/2023/03/31/481901aa00c0a1fe.png" srcset="/img/loading.gif" lazyload alt="Partition"></p>
+</li>
+<li><p>Producer：Producer是Kafka中的消息生产者，主要用于生产带有特定Topic的消息，生产者生产的消息通过Topic进行归类，保存在Kafka 集群的Broker上，具体的是保存在指定的partition 的目录下，以Segment的方式（.log文件和.index文件）进行存储</p>
+</li>
+<li><p>Consumer：Consumer是Kafka中的消费者，主要用于消费指定Topic的消息，Consumer是通过主动拉取的方式从Kafka集群中消费消息，消费者一定属于某一个特定的消费组。</p>
+</li>
+<li><p>Message：Message是实际发送和订阅的信息是实际载体，Producer发送到Kafka集群中的每条消息，都被Kafka包装成了一个Message对象，之后再存储在磁盘中，而不是直接存储的。</p>
+</li>
+<li><p>Consumer Group：每个Consumer属于一个特定的Consumer Group，新建Consumer的时候需要指定对应的Consumer Group ID</p>
+<p> 我们在消费数据时会在代码里面指定一个group.id，这个 id 代表的是消费组的名字，而且这个 group.id就算不设置，系统也会默认设置：</p>
+ <figure class="highlight pf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs pf">conf.<span class="hljs-built_in">set</span>Property(<span class="hljs-string">&quot;group.id&quot;</span>,<span class="hljs-string">&quot;tellYourDream&quot;</span>)<br></code></pre></td></tr></table></figure>
+<p> 我们所熟知的一些消息系统一般来说会这样设计，就是只要有一个消费者去消费了消息系统里面的数据，那么其余所有的消费者都不能再去消费这个数据。可是 Kafka 并不是这样，比如现在 ConsumerA 去消费了一个 TopicA 里面的数据：</p>
+ <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">consumerA:</span><br>    <span class="hljs-string">group.id</span> <span class="hljs-string">=</span> <span class="hljs-string">a</span><br><span class="hljs-attr">consumerB:</span><br>    <span class="hljs-string">group.id</span> <span class="hljs-string">=</span> <span class="hljs-string">a</span><br> <br><span class="hljs-attr">consumerC:</span><br>    <span class="hljs-string">group.id</span> <span class="hljs-string">=</span> <span class="hljs-string">b</span><br><span class="hljs-attr">consumerD:</span><br>    <span class="hljs-string">group.id</span> <span class="hljs-string">=</span> <span class="hljs-string">b</span><br></code></pre></td></tr></table></figure>
+<p> 再让 ConsumerB 也去消费 TopicA 的数据，它是消费不到了，但是我们在 ConsumerC 中重新指定一个另外的 group.id，ConsumerC 是可以消费到 TopicA 的数据的，而 ConsumerD 也是消费不到的，所以在 Kafka 中，不同组可有唯一的一个消费者去消费同一主题的数据。</p>
+<p> 消费者组就是让多个消费者并行消费信息而存在的，而且它们不会消费到同一个消息。</p>
+</li>
+<li><p>Broker：Kafka集群中的服务实例，也称之为节点，每个Kafka集群包含一个或者多个Broker（一个Broker就是一个服务器或节点）</p>
+</li>
+<li><p>Segment：一个partition当中存在多个segment文件段（分段存储），每个Segment分为两部分，.log文件和 .index 文件，其中 .index 文件是索引文件，主要用于快速查询.log 文件当中数据的偏移量位置</p>
+<ol>
+<li>.log文件：存放Message的数据文件，在Kafka中把数据文件就叫做日志文件。一个分区下面默认有n多个.log文件（分段存储）。一个.log文件大默认1G，消息会不断追加在.log文件中，当.log文件的大小超过1G的时候，会自动新建一个新的.log文件</li>
+<li>.index文件：存放.log文件的索引数据，每个.index文件有一个对应同名的.log文件。</li>
+</ol>
+</li>
+</ol>
+<h1 id="Kafka高性能的实现"><a href="#Kafka高性能的实现" class="headerlink" title="Kafka高性能的实现"></a>Kafka高性能的实现</h1><h2 id="零拷贝"><a href="#零拷贝" class="headerlink" title="零拷贝"></a>零拷贝</h2><h3 id="传统的拷贝过程"><a href="#传统的拷贝过程" class="headerlink" title="传统的拷贝过程"></a>传统的拷贝过程</h3><ol>
+<li>操作系统将数据从磁盘文件中读取到内核空间的页面缓存；</li>
+<li>应用程序将数据从内核空间读入用户空间缓冲区；</li>
+<li>应用程序将读到数据写回内核空间并放入socket缓冲区；</li>
+<li>操作系统将数据从socket缓冲区复制到网卡接口，此时数据才能通过网络发送。</li>
+</ol>
+<p>这个过程涉及到 4 次上下文切换以及 4 次数据的复制，并且有两次复制操作是由 CPU 完成。但是这个过程中，数据完全没有进行变化，仅仅是从磁盘复制到网卡缓冲区。</p>
+<p>在这种情况下，如果能够减少用户空间与内核空间之间的切换，即去掉2和3流程，比传统性能高。这样子首先数据被从磁盘读取到 Read Buffer 中，然后再发送到 Socket Buffer，最后才发送到网卡。虽然减少了用户空间和内核空间之间的数据交换，但依然存在多次数据复制。</p>
+<p>可以看出性能都消耗在彼此之间的数据复制过程中，那么进一步减少数据的复制过程，或者干脆没有数据复制这一过程，性能会明显增强。这就是DMA技术了。</p>
+<p><img src="https://s3.bmp.ovh/imgs/2023/03/31/1b77c145217d0c5f.png" srcset="/img/loading.gif" lazyload alt="传统拷贝过程">)</p>
+<h3 id="DMA技术"><a href="#DMA技术" class="headerlink" title="DMA技术"></a>DMA技术</h3><p>DMA(Direct Memory Access，直接存储器访问) 是所有现代电脑的重要特色，它允许不同速度的硬件装置来沟通，而不需要依赖于CPU的大量中断负载。否则，CPU 需要从来源把每一片段的资料复制到暂存器，然后把它们再次写回到新的地方。在这个时间中，CPU 对于其他的工作来说就无法使用。</p>
+<p>传统的内存访问，所有的请求都会发送到 CPU ，然后再由 CPU 来完成相关调度工作。当 DMA 技术的出现，数据文件在各个层之间的传输，则可以直接绕过CPU，使得外围设备可以通过DMA控制器直接访问内存。与此同时，CPU可以继续执行程序。</p>
+<p>现在电脑中很多硬件都是支持 DMA 技术的，这里面其中就包括我们此处用到的网卡。</p>
+<h3 id="零拷贝技术"><a href="#零拷贝技术" class="headerlink" title="零拷贝技术"></a><strong><strong>零拷贝技术</strong></strong></h3><p>有了 DMA 技术的，通过网卡直接去访问系统的内存，就可以实现现绝对的零拷贝了。这样就可以最大程度提高传输性能。通过“零拷贝”技术，我们可以去掉那些没必要的数据复制操作， 同时也会减少上下文切换次数。</p>
+<p><img src="https://s3.bmp.ovh/imgs/2023/03/31/4bb458df09a83c4b.png" srcset="/img/loading.gif" lazyload alt="DMA"></p>
+<h2 id="顺序写"><a href="#顺序写" class="headerlink" title="顺序写"></a>顺序写</h2><p>Kafka是将消息记录持久化到本地磁盘中的，有的人会认为磁盘读写性能差，可能会对Kafka性能如何保证提岀质疑。实际上不管是内存还是磁盘，快或慢关键在于寻址的方式，磁盘分为顺序读写与随机读写，内存也一样分为顺序读写与随机读写。基于磁盘的随机读写确实很慢，但磁盘的顺序读写性能却很高，一般而言要高岀磁盘随机读写三个数量级，一些情况下磁盘顺序读写性能甚至要高于内存随机读写。</p>
+<p>磁盘的顺序读写是磁盘使用模式中最有规律的，并且操作系统也对这种模式做了大 量优化，Kafka就是使用了磁盘顺序读写来提升的性能。Kafka的message是不断 追加到本地磁盘文件末尾的，而不是随机的写入，这使得Kafka写入吞吐量得到了显著提升。</p>
+<p>具体来说，kafka的日志文件都是一个 log entrie 序列，每个 log entrie 包含一个 4 字节整型数值（值为 N+5），1 个字节的 “magic value”，4 个字节的 CRC 校验码，其后跟 N 个字节的消息体。每条消息都有一个当前 Partition 下唯一的 64 字节的 offset，它指明了这条消息的起始位置。磁盘上存储的消息格式如下：</p>
+<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs livecodeserver">message <span class="hljs-built_in">length</span> ： <span class="hljs-number">4</span> <span class="hljs-keyword">bytes</span> (<span class="hljs-built_in">value</span>: <span class="hljs-number">1</span>+<span class="hljs-number">4</span>+n)<br><span class="hljs-string">&quot;magic&quot;</span> <span class="hljs-built_in">value</span> ： <span class="hljs-number">1</span> <span class="hljs-keyword">byte</span><br>crc ： <span class="hljs-number">4</span> <span class="hljs-keyword">bytes</span><br>payload ： n <span class="hljs-keyword">bytes</span><br></code></pre></td></tr></table></figure>
+
+<p>这个 log entries 并非由一个文件构成，而是分成多个 segment，每个 segment 以该 segment 第一条消息的 offset 命名并以“.kafka”为后缀。另外会有一个索引文件，它标明了每个 segment 下包含的 log entry 的 offset 范围，如下图所示:</p>
+<p><img src="https://s3.bmp.ovh/imgs/2023/03/31/5dc7d3bae1546566.png" srcset="/img/loading.gif" lazyload alt="log"></p>
+<p>因为每条消息都被 append 到该 Partition 中，属于顺序写磁盘，因此效率非常高。</p>
+<p><img src="https://s3.bmp.ovh/imgs/2023/03/31/3c5d3e8a6fb78598.png" srcset="/img/loading.gif" lazyload alt="append"></p>
+<h1 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h1><p>Kafka 作为一款高性能的分布式消息队列系统，广泛应用于各种大数据场景中。下面列举几个常见的应用场景：</p>
+<ol>
+<li>日志收集：在分布式系统中，日志是非常重要的一部分，通过将日志写入 Kafka 中，可以方便地进行收集、存储、处理和分析。例如，通过将应用程序的日志写入 Kafka 中，可以实现集中式的日志收集和分析，帮助开发人员快速定位和解决问题。</li>
+<li>流式处理：Kafka 可以实现流式数据的收集、存储和分析，支持实时的数据流处理和实时数据的转换。例如，将 IoT 设备的数据写入 Kafka 中，通过流处理工具（例如 Apache Flink）进行实时的数据分析和计算，可以帮助企业更好地了解用户需求和行为，优化产品和服务。</li>
+<li>消息系统：Kafka 可以作为消息系统，实现异步通信和消息传递，将应用程序解耦并提高系统的可伸缩性。例如，在一个微服务架构中，可以使用 Kafka 作为消息中间件，将各个服务之间的消息进行异步通信和传递，实现服务之间的解耦和流量削峰。</li>
+<li>测试数据生成：在进行系统测试和性能测试时，通常需要生成大量的测试数据。通过将测试数据写入 Kafka 中，可以方便地生成大规模的测试数据，提高测试效率和测试覆盖率。</li>
+<li>实时监控和报警：通过将系统的监控数据写入 Kafka 中，可以方便地进行实时监控和报警，及时发现和解决系统问题。例如，在分布式系统中，通过将各个节点的监控数据写入 Kafka 中，可以实时监控系统的健康状态，及时发现故障并进行处理。</li>
+</ol>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E4%B8%AD%E9%97%B4%E4%BB%B6/">#中间件</a>
+      
+        <a href="/tags/Kafka/">#Kafka</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Kafka简介与使用场景</div>
+      <div>https://shouldbeldy.github.io/2023/03/31/Kafka简介与使用场景/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Daoyu Lei</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年3月31日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/04/04/MYSQL%E6%B7%B1%E5%88%86%E9%A1%B5%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" title="MYSQL深分页性能优化">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">MYSQL深分页性能优化</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/02/21/k8s%E6%9C%AC%E5%9C%B0%E8%81%94%E8%B0%83%E5%B7%A5%E5%85%B7%E2%80%94%E2%80%94kt-connect/" title="k8s本地联调工具——kt-connect">
+                        <span class="hidden-mobile">k8s本地联调工具——kt-connect</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+      
+<p style="text-align:center">BUILD BY Shouldbe@2022</p> <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>框架Hexo</span></a> <i class="iconfont icon-code"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>主题Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

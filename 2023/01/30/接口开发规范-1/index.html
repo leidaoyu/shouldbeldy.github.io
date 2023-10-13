@@ -1,0 +1,670 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/cat.png">
+  <link rel="icon" href="/img/cat.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#222135">
+  <meta name="author" content="Daoyu Lei">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="文档书写开发应该先编写详细接口文档，确定输入输出的命名，类型后再进行开发，避免后续需要修改，同时也可以让需要用到该接口的前端尽早开始开发流程。文档示例如下：  接口名称：XXX调用关系：XXX前端-&gt;XXX后端  123456789101112131415161718192021222324252627282930Schema: HTTPPath: &#x2F;api&#x2F;v1&#x2F;job&#x2F;getXXXHea">
+<meta property="og:type" content="article">
+<meta property="og:title" content="接口开发规范(1)">
+<meta property="og:url" content="https://shouldbeldy.github.io/2023/01/30/%E6%8E%A5%E5%8F%A3%E5%BC%80%E5%8F%91%E8%A7%84%E8%8C%83-1/index.html">
+<meta property="og:site_name" content="ShouldbeBlog">
+<meta property="og:description" content="文档书写开发应该先编写详细接口文档，确定输入输出的命名，类型后再进行开发，避免后续需要修改，同时也可以让需要用到该接口的前端尽早开始开发流程。文档示例如下：  接口名称：XXX调用关系：XXX前端-&gt;XXX后端  123456789101112131415161718192021222324252627282930Schema: HTTPPath: &#x2F;api&#x2F;v1&#x2F;job&#x2F;getXXXHea">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s3.bmp.ovh/imgs/2023/01/30/6aaba8a9b4e454b1.jpg">
+<meta property="article:published_time" content="2023-01-30T01:49:34.000Z">
+<meta property="article:modified_time" content="2023-01-30T10:03:25.213Z">
+<meta property="article:author" content="Daoyu Lei">
+<meta property="article:tag" content="Java开发">
+<meta property="article:tag" content="Ailab">
+<meta property="article:tag" content="流程规范">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://s3.bmp.ovh/imgs/2023/01/30/6aaba8a9b4e454b1.jpg">
+  
+  
+  
+  <title>接口开发规范(1) - ShouldbeBlog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"shouldbeldy.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Shouldbe</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/background.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="接口开发规范(1)"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-01-30 09:49" pubdate>
+          2023年1月30日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.4k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          28 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">接口开发规范(1)</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="文档书写"><a href="#文档书写" class="headerlink" title="文档书写"></a>文档书写</h2><p>开发应该先编写详细接口文档，确定输入输出的命名，类型后再进行开发，避免后续需要修改，同时也可以让需要用到该接口的前端尽早开始开发流程。文档示例如下：</p>
+<blockquote>
+<p>接口名称：XXX<br>调用关系：XXX前端-&gt;XXX后端</p>
+</blockquote>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><code class="hljs text">Schema: HTTP<br>Path: /api/v1/job/getXXX<br>Header:<br>    content-type: application/json;charset=UTF-8<br>Method: POST<br>body:<br>&#123;<br>    &quot;uid&quot;: &quot;STRING&quot;, // 用户id<br>    &quot;jobsNum&quot;: &quot;STRING&quot; // <br>&#125;<br><br>// Response<br>Status Code: 200<br>body:<br>&#123;<br>    &quot;traceId&quot;: &quot;STRING&quot;,<br>    &quot;msgCode&quot;: &quot;STRING&quot;,<br>    &quot;msg&quot;: &quot;STRING&quot;,<br>    &quot;data&quot;: [            <br>        &#123;<br>            &quot;jobId&quot;: &quot;String&quot;, // <br>            &quot;jobName&quot;: &quot;String&quot;, // <br>            &quot;createTime&quot;: &quot;String&quot;, //<br>            &quot;createUserId&quot;: &quot;String&quot;, // <br>            &quot;status&quot;: Integer, // <br>            &quot;clusterId&quot;: &quot;String&quot;, // <br>            &quot;runtime&quot;: &quot;String&quot; // <br>        &#125;<br>    ]<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="接口输入输出"><a href="#接口输入输出" class="headerlink" title="接口输入输出"></a>接口输入输出</h2><h3 id="接口接受的Dto"><a href="#接口接受的Dto" class="headerlink" title="接口接受的Dto"></a>接口接受的Dto</h3><p>每个接口接受的RspDto需要额外编写，尽量不要复用他人的Dto类，因为如果他人的业务逻辑改了，比如改变一个属性的名称，会影响到自己的业务，所以需要尽可能解耦。</p>
+<h3 id="接口返回"><a href="#接口返回" class="headerlink" title="接口返回"></a>接口返回</h3><p>接口返回应该用ReturnBase封装起来，可以自动处理接口调用报错等信息</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@PostMapping(&quot;/getXXXX&quot;)</span><br><span class="hljs-meta">@ApiOperation(&quot;description&quot;)</span><br><span class="hljs-comment">// @OnlyIntranetAccess （内网调用）</span><br><span class="hljs-keyword">public</span> ResponseEntity&lt;ReturnBase&gt; <span class="hljs-title function_">getXXXX</span><span class="hljs-params">()</span>&#123;<br>        <span class="hljs-keyword">return</span> Optional.of(Service.getXXXX())<br>        .map(ret-&gt;<span class="hljs-keyword">new</span> <span class="hljs-title class_">ResponseEntity</span>&lt;&gt;(ret,HttpStatus.OK))<br>        .orElseThrow(()-&gt;<span class="hljs-keyword">new</span> <span class="hljs-title class_">MMException</span>(<span class="hljs-string">&quot;error.job.getXXXX&quot;</span>,ReturnEnum.C_GENERAL_BUSINESS_ERROR.getMsgCode()));<br>        &#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="接口返回处理"><a href="#接口返回处理" class="headerlink" title="接口返回处理"></a>接口返回处理</h3><ul>
+<li>处理用ReturnBase封装的接口返回信息时，需要序列化和反序列化，举例如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs java">String XXXXStr=JsonUtil.jsonObj2Str(XXXXReturn.getData());<br>        List&lt;XXXXRspDto&gt; XXXX=JsonUtil.jsonArrayStr2jsonArray(XXXXStr,XXXXRspDto.class);<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>enum枚举类在序列化和反序列化后需要在枚举类上添加@SerializedName注解，否则会变成0。value需要一一对应，如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@SerializedName(&quot;0&quot;)</span><br>DELETE(<span class="hljs-number">0</span>,<span class="hljs-string">&quot;删除&quot;</span>,<span class="hljs-string">&quot;Delete&quot;</span>),<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>对于返回的信息需要对各项空值进行判断，防止取数据的时候产生报错</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs java"><br><span class="hljs-keyword">if</span>(Objects.isNull(getXXXReturn)||<br>        Objects.isNull(getXXXReturn.getData())||<br>        !ReturnEnum.SUCCESS.getMsgCode().equals(getXXXReturn.getMsgCode()))&#123;<br>        log.error(<span class="hljs-string">&quot;get user info by username(&#123;&#125;) from aide-user failed, msg=&#123;&#125;&quot;</span><br>        ,XXX,<br>        Objects.isNull(getUidByNameReturn)?<span class="hljs-string">&quot;null&quot;</span>:getXXXReturn.getMsg());<br>        <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;<br>        &#125;<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="log等级设置"><a href="#log等级设置" class="headerlink" title="log等级设置"></a>log等级设置</h2><p>用log日志打印的时候，需要判断打印内容长度是否很多，如果内容很多需要使用<code>log.debug</code>而不是<code>log.info</code>。同时在log记录前需要对当前的log<br>level做一个判断，避免不必要的操作</p>
+<hr>
+<h2 id="尽可能规避硬编码"><a href="#尽可能规避硬编码" class="headerlink" title="尽可能规避硬编码"></a>尽可能规避硬编码</h2><p>文本部分尽量避免硬编码，可以采用yml文件配置custom的方式，例如在文本部分尽量避免硬编码，可以采用yml文件配置的方式，例如：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">custom:</span><br>  <span class="hljs-attr">bot:</span><br>    <span class="hljs-attr">feishu:</span><br>      <span class="hljs-attr">allSlurmJobOfUserPara:</span><br>        <span class="hljs-attr">defaultJobsNum:</span> <span class="hljs-string">&quot;15&quot;</span><br>        <span class="hljs-attr">nRow:</span> <span class="hljs-string">&quot;-n&quot;</span><br>        <span class="hljs-attr">noJobsReturn:</span> <span class="hljs-string">&quot;没有查询到任务&quot;</span><br>        <span class="hljs-attr">jobsReturn:</span> <span class="hljs-string">&quot;查询到&#123;jobsNum&#125;条任务记录:\n&quot;</span><br></code></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">package</span> org.openmmlab.platform.aidebot.property;<br><br><span class="hljs-keyword">import</span> cn.hutool.log.LogFactory;<br><span class="hljs-keyword">import</span> lombok.Data;<br><span class="hljs-keyword">import</span> org.springframework.boot.context.properties.ConfigurationProperties;<br><span class="hljs-keyword">import</span> org.springframework.cloud.context.config.annotation.RefreshScope;<br><span class="hljs-keyword">import</span> org.springframework.context.annotation.Configuration;<br><br><span class="hljs-keyword">import</span> java.util.List;<br><br><span class="hljs-meta">@Configuration</span><br><span class="hljs-meta">@ConfigurationProperties(prefix = &quot;custom&quot;)</span><br><span class="hljs-meta">@Data</span><br><span class="hljs-meta">@RefreshScope</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">CustomProperty</span> &#123;<br>    <span class="hljs-keyword">private</span> Bot bot;<br><br>    <span class="hljs-meta">@Data</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Bot</span> &#123;<br>        <span class="hljs-keyword">private</span> Feishu feishu;<br><br>        <span class="hljs-meta">@Data</span><br>        <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Feishu</span> &#123;<br>            <span class="hljs-keyword">private</span> AllSlurmJobOfUserPara allSlurmJobOfUserPara;<br><br>            <span class="hljs-meta">@Data</span><br>            <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">AllSlurmJobOfUserPara</span> &#123;<br>                <span class="hljs-keyword">private</span> String defaultJobsNum;<br>                <span class="hljs-keyword">private</span> String nRow;<br>                <span class="hljs-keyword">private</span> String noJobsReturn;<br>                <span class="hljs-keyword">private</span> String jobsReturn;<br>            &#125;<br>        &#125;<br>    &#125;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="kafka"><a href="#kafka" class="headerlink" title="kafka"></a>kafka</h2><p>本地运行项目不需要kafka，在项目路径中找到kafka目录，将里面的配置注释掉，否则会报如下错误</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">WARN [AdminClient clientId=adminclient-1] Connection to node -1 (localhost/127.0.0.1:9092) could not<br></code></pre></td></tr></table></figure>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Java%E5%BC%80%E5%8F%91/">#Java开发</a>
+      
+        <a href="/tags/Ailab/">#Ailab</a>
+      
+        <a href="/tags/%E6%B5%81%E7%A8%8B%E8%A7%84%E8%8C%83/">#流程规范</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>接口开发规范(1)</div>
+      <div>https://shouldbeldy.github.io/2023/01/30/接口开发规范-1/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Daoyu Lei</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年1月30日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/02/04/K8S%E4%BB%8B%E7%BB%8D%E5%92%8C%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/" title="K8S介绍和基本操作">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">K8S介绍和基本操作</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/01/06/Gitlab-%E5%90%88%E4%BD%9C%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B%EF%BC%88%E6%96%B0%E4%BA%BA%E5%90%91%EF%BC%89/" title="Gitlab 合作开发流程（新人向）">
+                        <span class="hidden-mobile">Gitlab 合作开发流程（新人向）</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+      
+<p style="text-align:center">BUILD BY Shouldbe@2022</p> <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>框架Hexo</span></a> <i class="iconfont icon-code"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>主题Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
